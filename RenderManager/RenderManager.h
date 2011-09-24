@@ -1,21 +1,16 @@
 #ifndef MAIN_VIEW_H
 #define MAIN_VIEW_H
 
-#include "Lemming.h"
-#include "Region.h"
-#include "SpatialModel.h"
 #include <SDL/SDL.h>
 #include <SDL/SDL_gfxPrimitives.h>
 
-class RGBColor {
-    public:
+struct RGBColor {
     int Red;
     int Green;
     int Blue;
 };
 
-class HSVColor {
-    public:
+struct HSVColor {
     float Hue;
     float Saturation;
     float Value;
@@ -31,10 +26,11 @@ class RenderManager {
     void render_cell();
     const int WINDOW_WIDTH;
     const int WINDOW_HEIGHT;
+    void render_region();
     const char* WINDOW_TITLE;
     SDL_Surface* screen;
     SDL_Event event;
-    SpatialDB::SpatialModel&  spatial_db;
+//    SpatialDB::SpatialModel&  spatial_db;
     const float GOLDEN_RATIO_CONJUGATE;
     double modulus(double a, double b);
     float hue;

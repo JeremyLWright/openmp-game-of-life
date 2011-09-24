@@ -16,7 +16,7 @@ RenderManager::RenderManager()
     SDL_WM_SetCaption(WINDOW_TITLE, 0);
 
     close_requested = false;
-    database_connection = spatial_db.get_database();
+    //database_connection = spatial_db.get_database();
 
    hue = (rand()%256)/RAND_MAX;
 
@@ -36,7 +36,7 @@ bool RenderManager::render_frame()
     }
 
     SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 255, 255, 255));
-
+    render_region();
     /* Render Cell here */
     SDL_Flip(screen);
     return close_requested;
@@ -45,17 +45,27 @@ bool RenderManager::render_frame()
 
 void RenderManager::render_cell()
 {
-    Cell p;
-
+    //Cell p;
     RGBColor rgb = get_color();
-
+/*
     boxRGBA(screen,
             p.X, p.Y,
             p.X+10, p.Y+10,
             rgb.Red, rgb.Green, rgb.Blue, 255);
-
+*/
     return;
 }
+
+void RenderManager::render_region()
+{
+    RGBColor rgb = get_color();
+    rectangleRGBA( screen,
+            1, 1,
+            20, 40,
+            rgb.Red, rgb.Green, rgb.Blue, 255);
+    return;
+}
+
 
 RGBColor RenderManager::get_color()
 {

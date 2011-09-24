@@ -12,12 +12,21 @@
  */
 
 #include <iostream>
-
+#include "RenderManager/RenderManager.h"
 using std::cout;
 using std::endl;
 
+
 int main(int argc, const char *argv[])
 {
-    cout << "Hello World." << endl;    
+    cout << "Welcome. Rendering World. Please Stand-by" << endl;    
+    RenderManager* rm = new RenderManager();
+    while(1)
+    {
+        if(rm->render_frame())
+            break;
+
+    }
+    delete rm;
     return 0;
 }
