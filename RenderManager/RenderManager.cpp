@@ -22,6 +22,15 @@ RenderManager::RenderManager()
 
 }
 
+RenderManager::Ptr RenderManager::construct()
+{
+    RenderManager::Ptr c(new RenderManager);
+    c->self = c;
+    return c;
+}
+
+RenderManager::~RenderManager(){}
+
 
 bool RenderManager::render_frame()
 {

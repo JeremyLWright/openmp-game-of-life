@@ -12,21 +12,50 @@
  */
 
 #include <iostream>
+#include <fstream>
 #include "RenderManager/RenderManager.h"
+#include "InputGenerator.h"
 using std::cout;
 using std::endl;
+using std::ifstream;
 
+
+void print_usage()
+{
+    cout << "Game of Life Usage:" << endl;
+    cout << "\trun-life n file" << endl;
+    cout << "\t\tn := size of the n x n grid" << endl;
+    cout << "\t\tfile := some file name or the keyword random" << endl;
+}
 
 int main(int argc, const char *argv[])
 {
+    if(argc != 3)
+    {
+        print_usage();
+        exit(1);
+    }
+
+    int n;
+    ifstream fin;
+    n = atoi(argv[1]);
+    string filename;
+    if(strncmp("random", argv[2], sizeof("random")) == 0)
+    {
+        cout << "Using Random Configuration" << endl;
+        InputGenerator::Ptr ig = InputGenerator::construct();
+        filename = ig->createFile(n);
+        cout << "Created: " << filename << endl;
+    }
+
     cout << "Welcome. Rendering World. Please Stand-by" << endl;    
-    RenderManager* rm = new RenderManager();
+/*    RenderManager::Ptr rm = RenderManager::construct();
     while(1)
     {
         if(rm->render_frame())
             break;
+        
 
-    }
-    delete rm;
+    }*/
     return 0;
 }

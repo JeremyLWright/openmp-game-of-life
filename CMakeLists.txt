@@ -16,7 +16,7 @@ include_directories(".")
 include_directories("/usr/include/SDL")
 SET(CMAKE_CXX_FLAGS "-ggdb -g3 -Wall")
 
-add_executable(run-life main.cpp)
+add_executable(run-life main.cpp GameGrid.cpp InputGenerator.cpp)
 target_link_libraries(run-life RenderManager SDL_gfx ${SDL_LIBRARY})
 
 

@@ -1,8 +1,17 @@
+/**
+ * @brief General Render Manager for drawing to an SDL Surface.
+ *
+ * @par
+ * Copyright Jeremy Wright (c) 2011
+ * Creative Commons Attribution-ShareAlike 3.0 Unported License.
+ */
 #ifndef MAIN_VIEW_H
 #define MAIN_VIEW_H
 
 #include <SDL/SDL.h>
 #include <SDL/SDL_gfxPrimitives.h>
+#include <tr1/memory>
+
 
 struct RGBColor {
     int Red;
@@ -18,9 +27,11 @@ struct HSVColor {
 
 class RenderManager {
     public:
-    RenderManager();
-
+    typedef std::tr1::shared_ptr<RenderManager> Ptr;
+    typedef std::tr1::weak_ptr<RenderManager> WeakPtr;
     bool close_requested;
+    static RenderManager::Ptr construct();
+    virtual ~RenderManager();
     bool render_frame();
     protected:
     void render_cell();
@@ -34,9 +45,12 @@ class RenderManager {
     const float GOLDEN_RATIO_CONJUGATE;
     double modulus(double a, double b);
     float hue;
-
+    
     RGBColor hsv_to_rgb(HSVColor hsv);
     RGBColor get_color();
+    private:
+    RenderManager();
+    RenderManager::WeakPtr self;
     
 };
 
