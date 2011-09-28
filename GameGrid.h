@@ -24,7 +24,7 @@ public:
     virtual ~GameGrid();
     virtual void ParseInputFile();
 protected:
-    virtual vector<string> tokenize(string);
+    virtual vector<bool> tokenize(string);
     bool** Grid;
 private:
     GameGrid(string filename, size_t size);

@@ -52,29 +52,26 @@ void GameGrid::ParseInputFile()
 
     for(int row = 0; !getline(fin, line).eof(); ++row)
     {
-        vector<string> values = tokenize(line);
+        vector<bool> values = tokenize(line);
         int col = 0;
-
-        for(vector<string>::iterator element = values.begin();
+        for(vector<bool>::iterator element = values.begin();
                element != values.end();
                ++element,  ++col)
         {
-            bool b;
-            from_string<bool>(b, *element, std::dec);
-            Grid[col][row] = b;
+            Grid[col][row] = *element;
         }
     }
 }
 
-vector<string> GameGrid::tokenize(string line)
+vector<bool> GameGrid::tokenize(string line)
 {
     // construct a stream from the string
 	stringstream strstr(line);
 
 	// use stream iterators to copy the stream to the vector as whitespace separated strings
-	istream_iterator<string> it(strstr);
-	istream_iterator<string> end;
-	vector<string> results(it, end);
+	istream_iterator<bool> it(strstr);
+	istream_iterator<bool> end;
+	vector<bool> results(it, end);
 
 	return results;
 }
