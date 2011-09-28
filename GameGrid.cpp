@@ -73,6 +73,115 @@ void GameGrid::ParseInputFile()
     }
 }
 
+bool GameGrid::MovePtr(bool** cellPtr, Direction direction, size_t col, size_t row)
+{
+    switch(direction)
+    {
+        case UP:
+            if(row == 0)
+                *cellPtr = 0; //Contribute nothing.
+            else
+                *cellPtr = &(Grid[col][row-1]);
+            break;
+        case UP_RIGHT:
+            if(row == 0 || col == GetGridSize()-1)
+                *cellPtr = 0;
+            else
+                *cellPtr = &(Grid[col+1][row-1]);
+        case UP_LEFT:
+            if(row == 0 || col == 0)
+                *cellPtr = 0;
+            else
+                *cellPtr = &(Grid[col-1][row-1]);
+        case DOWN:
+            if(row == GetGridSize()-1)
+                *cellPtr = 0;
+            else
+                *cellPtr = &(Grid[col][row+1]);
+            break;
+        case DOWN_RIGHT:
+            if(row == GetGridSize()-1 || col == GetGridSize()-1)
+                *cellPtr = 0;
+            else
+                *cellPtr = &(Grid[col+1][row+1]);
+        case DOWN_LEFT:
+            if(row == GetGridSize()-1 || col == 0)
+                *cellPtr = 0;
+            else
+                *cellPtr = &(Grid[col-1][row+1]);
+        case RIGHT:
+            if(col == GetGridSize()-1)
+                *cellPtr = 0;
+            else
+                *cellPtr = &(Grid[col+1][row]);
+            break;
+        case LEFT:
+            if(col == 0)
+                *cellPtr = 0;
+            else
+                *cellPtr = &(Grid[col-1][row]);
+            break;
+    }
+
+    return *cellPtr ? true : false;
+
+
+}
+
+uint32_t GameGrid::CountLivingNeighbors(size_t col, size_t row)
+{
+    uint32_t livingNeighbors = 0;
+    
+    bool* cellPtr = 0;
+    if(MovePtr(&cellPtr, UP, col, row))
+        *cellPtr ? ++livingNeighbors : 0;
+    if(MovePtr(&cellPtr, DOWN, col, row))
+        *cellPtr ? ++livingNeighbors : 0;
+    if(MovePtr(&cellPtr, LEFT, col, row))
+        *cellPtr ? ++livingNeighbors : 0;
+    if(MovePtr(&cellPtr, RIGHT, col, row))
+        *cellPtr ? ++livingNeighbors : 0;
+    if(MovePtr(&cellPtr, UP_LEFT, col, row))
+        *cellPtr ? ++livingNeighbors : 0;
+    if(MovePtr(&cellPtr, UP_RIGHT, col, row))
+        *cellPtr ? ++livingNeighbors : 0;
+    if(MovePtr(&cellPtr, DOWN_LEFT, col, row))
+        *cellPtr ? ++livingNeighbors : 0;
+    if(MovePtr(&cellPtr, DOWN_RIGHT, col, row))
+        *cellPtr ? ++livingNeighbors : 0;
+    
+    return livingNeighbors;
+}
+
+void GameGrid::CalculateGeneration()
+{
+    for(int col = 0; col < GetGridSize(); ++col)
+    {
+        for(int row = 0; row < GetGridSize(); ++row)
+        {
+            uint32_t livingNeighbors = CountLivingNeighbors(col, row);
+            if(Grid[col][row]) //If Cell is alive
+            {
+                if(livingNeighbors <= 1 || livingNeighbors >= 4)
+                {
+                    //Kill Cell
+                    Grid[col][row] = false;
+                }
+                /* else remain alive */
+            }
+            else
+            {
+                if(livingNeighbors == 3)
+                {
+                    //ConceiveCell
+                    Grid[col][row] = true;
+                }
+            }
+
+        }
+    }
+}
+
 vector<bool> GameGrid::tokenize(string line)
 {
     // construct a stream from the string

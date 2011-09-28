@@ -39,9 +39,9 @@ bool RenderManager::render_frame()
     for(size_t col = 0; col < model->GetGridSize()-1; ++col)
     {
         
+        RGBColor rgb = get_color();
         for(size_t row = 0; row < model->GetGridSize()-1; ++row)
         { 
-            RGBColor rgb = get_color();
             if(model->GetCellValue(col, row))
                 boxRGBA(screen, col*10, row*10, (col+1)*10, (row+1)*10, 
                      rgb.Red, rgb.Green, rgb.Blue, 255);

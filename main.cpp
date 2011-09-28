@@ -58,6 +58,7 @@ int main(int argc, const char *argv[])
     RenderManager::Ptr rm = RenderManager::construct(game);
     while(1)
     {
+        game->CalculateGeneration();
         if(rm->render_frame())
             break;
         
