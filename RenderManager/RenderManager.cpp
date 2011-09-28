@@ -51,10 +51,11 @@ bool RenderManager::render_frame()
     }
     /* Render Cell here */
     SDL_Flip(screen);
-    const int FRAME_TIME = 250;
+    const int FRAME_TIME = 1000;
     static int previous_time = SDL_GetTicks();
     while(FRAME_TIME > (SDL_GetTicks() - previous_time))
     {
+        while(1);
         if(SDL_PollEvent(&event))
         {
             if(event.type == SDL_QUIT)

@@ -4,6 +4,8 @@
 #include <iterator>
 #include <algorithm>
 #include <iostream>
+#include <list>
+using std::list;
 using std::cout;
 using std::endl;
 using std::ifstream;
@@ -25,6 +27,11 @@ namespace {
 		std::istringstream iss(s, std::istringstream::in);
 		return !(iss >> f >> t).fail();
 	}
+    
+    struct Update {
+        bool updateValue;
+        bool* position;
+    };
 }
 
 GameGrid::Ptr GameGrid::construct(string filename, size_t size)
@@ -40,7 +47,7 @@ GameGrid::GameGrid(string filename, size_t size)
 {
     this->filename = filename;
     Grid = new bool*[size];
-    for(int i = 0; i < size; ++i)
+    for(size_t i = 0; i < size; ++i)
         Grid[i] = new bool[size];
     gridSize = size;
 }
@@ -123,7 +130,7 @@ bool GameGrid::MovePtr(bool** cellPtr, Direction direction, size_t col, size_t r
             break;
     }
 
-    return *cellPtr ? true : false;
+    return (*cellPtr != 0) ? true : false;
 
 
 }
@@ -134,38 +141,55 @@ uint32_t GameGrid::CountLivingNeighbors(size_t col, size_t row)
     
     bool* cellPtr = 0;
     if(MovePtr(&cellPtr, UP, col, row))
-        *cellPtr ? ++livingNeighbors : 0;
+        *cellPtr ? livingNeighbors++ : 0;
     if(MovePtr(&cellPtr, DOWN, col, row))
-        *cellPtr ? ++livingNeighbors : 0;
+        *cellPtr ? livingNeighbors++ : 0;
     if(MovePtr(&cellPtr, LEFT, col, row))
-        *cellPtr ? ++livingNeighbors : 0;
+        *cellPtr ? livingNeighbors++ : 0;
     if(MovePtr(&cellPtr, RIGHT, col, row))
-        *cellPtr ? ++livingNeighbors : 0;
+        *cellPtr ? livingNeighbors++ : 0;
     if(MovePtr(&cellPtr, UP_LEFT, col, row))
-        *cellPtr ? ++livingNeighbors : 0;
+        *cellPtr ? livingNeighbors++ : 0;
     if(MovePtr(&cellPtr, UP_RIGHT, col, row))
-        *cellPtr ? ++livingNeighbors : 0;
+        *cellPtr ? livingNeighbors++ : 0;
     if(MovePtr(&cellPtr, DOWN_LEFT, col, row))
-        *cellPtr ? ++livingNeighbors : 0;
+        *cellPtr ? livingNeighbors++ : 0;
     if(MovePtr(&cellPtr, DOWN_RIGHT, col, row))
-        *cellPtr ? ++livingNeighbors : 0;
+        *cellPtr ? livingNeighbors++ : 0;
     
     return livingNeighbors;
 }
 
 void GameGrid::CalculateGeneration()
 {
-    for(int col = 0; col < GetGridSize(); ++col)
+    list<Update> delayedUpdates;
+    
+    for(size_t col = 0; col < GetGridSize(); ++col)
     {
-        for(int row = 0; row < GetGridSize(); ++row)
+        for(size_t row = 0; row < GetGridSize(); ++row)
         {
             uint32_t livingNeighbors = CountLivingNeighbors(col, row);
+            cout << "Row: " << row 
+                << "Col: " << col
+                << ": " << livingNeighbors << endl;
             if(Grid[col][row]) //If Cell is alive
             {
-                if(livingNeighbors <= 1 || livingNeighbors >= 4)
+                if(livingNeighbors <= 1)
                 {
                     //Kill Cell
-                    Grid[col][row] = false;
+                    Update u;
+                    u.updateValue = false;
+                    u.position = &(Grid[col][row]);
+                    delayedUpdates.push_back(u);
+                }
+
+                if(livingNeighbors >= 4)
+                {
+                    //Kill Cell
+                    Update u;
+                    u.updateValue = false;
+                    u.position = &(Grid[col][row]);
+                    delayedUpdates.push_back(u);
                 }
                 /* else remain alive */
             }
@@ -174,11 +198,22 @@ void GameGrid::CalculateGeneration()
                 if(livingNeighbors == 3)
                 {
                     //ConceiveCell
-                    Grid[col][row] = true;
+                    Update u;
+                    u.updateValue = true;
+                    u.position = &(Grid[col][row]);
+                    delayedUpdates.push_back(u);
                 }
             }
 
         }
+    }
+
+    // Commit all updates to the grid.
+    for(list<Update>::const_iterator i = delayedUpdates.begin();
+            i != delayedUpdates.end();
+            ++i)
+    {
+        *(i->position) = i->updateValue;
     }
 }
 

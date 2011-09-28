@@ -33,6 +33,7 @@ protected:
     uint32_t CountLivingNeighbors(size_t col, size_t row);
     bool** Grid;
     size_t gridSize;
+    
 private:
     GameGrid(string filename, size_t size);
     string filename;

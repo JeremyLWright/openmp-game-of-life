@@ -18,6 +18,7 @@
 #include "InputGenerator.h"
 using std::cout;
 using std::endl;
+using std::cin;
 using std::ifstream;
 
 #define RENDERING
