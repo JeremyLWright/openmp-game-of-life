@@ -24,9 +24,11 @@ public:
     virtual ~GameGrid();
     virtual void ParseInputFile();
     virtual bool GetCellValue(size_t col, size_t row);
+    virtual size_t GetGridSize();
 protected:
     virtual vector<bool> tokenize(string);
     bool** Grid;
+    size_t gridSize;
 private:
     GameGrid(string filename, size_t size);
     string filename;

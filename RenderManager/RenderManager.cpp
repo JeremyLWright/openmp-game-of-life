@@ -47,9 +47,9 @@ bool RenderManager::render_frame()
 
     //SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 255, 255, 255));
     //render_region();
-    for(size_t col = 0; col < 5; ++col)
+    for(size_t col = 0; col < model->GetGridSize()-1; ++col)
     {
-        for(size_t row = 0; row < 5; ++row)
+        for(size_t row = 0; row < model->GetGridSize()-1; ++row)
         { 
             RGBColor rgb = get_color();
             if(model->GetCellValue(col, row))
