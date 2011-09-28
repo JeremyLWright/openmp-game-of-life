@@ -9,7 +9,6 @@
 #define MAIN_VIEW_H
 
 #include <SDL/SDL.h>
-#include <SDL/SDL_gfxPrimitives.h>
 #include <tr1/memory>
 
 

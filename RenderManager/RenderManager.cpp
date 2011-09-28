@@ -1,4 +1,5 @@
 #include "RenderManager.h"
+#include <SDL/SDL_gfxPrimitives.h>
 #include <time.h>
 #include <list>
 using namespace std;

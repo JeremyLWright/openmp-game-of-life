@@ -13,6 +13,7 @@
 
 #include <iostream>
 #include <fstream>
+#include "GameGrid.h"
 #include "RenderManager/RenderManager.h"
 #include "InputGenerator.h"
 using std::cout;
@@ -48,14 +49,19 @@ int main(int argc, const char *argv[])
         cout << "Created: " << filename << endl;
     }
 
+    cout << "Parsing the input file." << endl;
+    GameGrid::Ptr game = GameGrid::construct(filename, n);
+    game->ParseInputFile();
+#ifdef RENDERING
     cout << "Welcome. Rendering World. Please Stand-by" << endl;    
-/*    RenderManager::Ptr rm = RenderManager::construct();
+    RenderManager::Ptr rm = RenderManager::construct();
     while(1)
     {
         if(rm->render_frame())
             break;
         
 
-    }*/
+    }
+#endif
     return 0;
 }

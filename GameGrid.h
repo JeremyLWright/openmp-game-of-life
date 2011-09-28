@@ -9,21 +9,27 @@
 #define _GAMEGRID
 
 #include <tr1/memory>
-#include <boost/multi_array.hpp>
+#include <vector>
+#include <string>
+
+using std::string;
+using std::vector;
 
 class GameGrid
 {
 public:
     typedef std::tr1::shared_ptr<GameGrid> Ptr;
     typedef std::tr1::weak_ptr<GameGrid> WeakPtr;
-    static GameGrid::Ptr construct();
+    static GameGrid::Ptr construct(string filename, size_t size);
     virtual ~GameGrid();
+    virtual void ParseInputFile();
+protected:
+    virtual vector<string> tokenize(string);
+    bool** Grid;
 private:
-    GameGrid();
+    GameGrid(string filename, size_t size);
+    string filename;
     GameGrid::WeakPtr self;
-    typedef boost::multi_array<bool, 2> array_type;
-    typedef array_type::index index;
-    array_type Grid;
     
 };
 

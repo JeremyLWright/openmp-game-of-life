@@ -34,11 +34,11 @@ string InputGenerator::createFile(size_t n)
 			int coin = rand() % 100;
 			if(	coin <= 40 )
 			{
-				fwrite( "1 ", sizeof(char), sizeof("1 "), fp );
+				fwrite( "1 ", 1, 2, fp );
 			}
 			else
 			{
-				fwrite( "0 ", sizeof(char), sizeof("0 "), fp );
+				fwrite( "0 ", 1, 2, fp );
 			}
 		}
 
