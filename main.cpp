@@ -20,6 +20,7 @@ using std::cout;
 using std::endl;
 using std::ifstream;
 
+#define RENDERING
 
 void print_usage()
 {
@@ -54,7 +55,7 @@ int main(int argc, const char *argv[])
     game->ParseInputFile();
 #ifdef RENDERING
     cout << "Welcome. Rendering World. Please Stand-by" << endl;    
-    RenderManager::Ptr rm = RenderManager::construct();
+    RenderManager::Ptr rm = RenderManager::construct(game);
     while(1)
     {
         if(rm->render_frame())

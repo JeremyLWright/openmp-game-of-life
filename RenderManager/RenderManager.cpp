@@ -4,11 +4,11 @@
 #include <list>
 using namespace std;
 
-RenderManager::RenderManager()
+RenderManager::RenderManager(GameGrid::Ptr grid)
     : WINDOW_WIDTH(640), 
     WINDOW_HEIGHT(480), 
     WINDOW_TITLE("Mega-Awesome Game of Life"),
-    /* Initialize Model Here */
+    model(grid),
     GOLDEN_RATIO_CONJUGATE(0.618033988749895)
 {
     SDL_Init(SDL_INIT_VIDEO);
@@ -23,9 +23,9 @@ RenderManager::RenderManager()
 
 }
 
-RenderManager::Ptr RenderManager::construct()
+RenderManager::Ptr RenderManager::construct(GameGrid::Ptr grid)
 {
-    RenderManager::Ptr c(new RenderManager);
+    RenderManager::Ptr c(new RenderManager(grid));
     c->self = c;
     return c;
 }
@@ -45,8 +45,18 @@ bool RenderManager::render_frame()
         }
     }
 
-    SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 255, 255, 255));
-    render_region();
+    //SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 255, 255, 255));
+    //render_region();
+    for(size_t col = 0; col < 5; ++col)
+    {
+        for(size_t row = 0; row < 5; ++row)
+        { 
+            RGBColor rgb = get_color();
+            if(model->GetCellValue(col, row))
+                boxRGBA(screen, col*10, row*10, (col+1)*10, (row+1)*10, 
+                     rgb.Red, rgb.Green, rgb.Blue, 255);
+        }
+    }
     /* Render Cell here */
     SDL_Flip(screen);
     return close_requested;

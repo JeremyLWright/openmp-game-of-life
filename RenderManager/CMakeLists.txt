@@ -13,6 +13,7 @@ ExternalProject_Add(
     )
 ExternalProject_Get_Property(SDL_gfx-2.0 INSTALL_DIR)
 include_directories("${INSTALL_DIR}/include")
+include_directories("..")
 link_directories(${INSTALL_DIR}/lib)
 include_directories("/usr/include/SDL") # So the SDL_gfx library can find SDL.
 

@@ -10,6 +10,7 @@
 
 #include <SDL/SDL.h>
 #include <tr1/memory>
+#include "GameGrid.h"
 
 
 struct RGBColor {
@@ -29,7 +30,7 @@ class RenderManager {
     typedef std::tr1::shared_ptr<RenderManager> Ptr;
     typedef std::tr1::weak_ptr<RenderManager> WeakPtr;
     bool close_requested;
-    static RenderManager::Ptr construct();
+    static RenderManager::Ptr construct(GameGrid::Ptr grid);
     virtual ~RenderManager();
     bool render_frame();
     protected:
@@ -40,6 +41,7 @@ class RenderManager {
     const char* WINDOW_TITLE;
     SDL_Surface* screen;
     SDL_Event event;
+    GameGrid::Ptr model;
 //    SpatialDB::SpatialModel&  spatial_db;
     const float GOLDEN_RATIO_CONJUGATE;
     double modulus(double a, double b);
@@ -48,7 +50,7 @@ class RenderManager {
     RGBColor hsv_to_rgb(HSVColor hsv);
     RGBColor get_color();
     private:
-    RenderManager();
+    RenderManager(GameGrid::Ptr grid);
     RenderManager::WeakPtr self;
     
 };

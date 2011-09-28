@@ -23,6 +23,7 @@ public:
     static GameGrid::Ptr construct(string filename, size_t size);
     virtual ~GameGrid();
     virtual void ParseInputFile();
+    virtual bool GetCellValue(size_t col, size_t row);
 protected:
     virtual vector<bool> tokenize(string);
     bool** Grid;

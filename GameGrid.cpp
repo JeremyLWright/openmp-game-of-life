@@ -44,6 +44,11 @@ GameGrid::GameGrid(string filename, size_t size)
         Grid[i] = new bool[size];
 }
 
+bool GameGrid::GetCellValue(size_t col, size_t row)
+{
+    return Grid[col][row];
+}
+
 void GameGrid::ParseInputFile()
 {
     ifstream fin(filename.c_str());
