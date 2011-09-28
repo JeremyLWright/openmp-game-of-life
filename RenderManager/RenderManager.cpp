@@ -36,26 +36,25 @@ RenderManager::~RenderManager(){}
 bool RenderManager::render_frame()
 {
     SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 255, 255, 255));
+    RGBColor rgb = get_color();
     for(size_t col = 0; col < model->GetGridSize()-1; ++col)
     {
         
-        RGBColor rgb = get_color();
         for(size_t row = 0; row < model->GetGridSize()-1; ++row)
         { 
             if(model->GetCellValue(col, row))
                 boxRGBA(screen, col*10, row*10, (col+1)*10, (row+1)*10, 
                      rgb.Red, rgb.Green, rgb.Blue, 255);
             rectangleRGBA(screen, col*10, row*10, (col+1)*10, (row+1)*10, 
-                    0, 0, 0, 255);
+                    195, 195, 195, 255);
         }
     }
     /* Render Cell here */
     SDL_Flip(screen);
-    const int FRAME_TIME = 1000;
+    const int FRAME_TIME = 100;
     static int previous_time = SDL_GetTicks();
     while(FRAME_TIME > (SDL_GetTicks() - previous_time))
     {
-        while(1);
         if(SDL_PollEvent(&event))
         {
             if(event.type == SDL_QUIT)
@@ -103,7 +102,7 @@ RGBColor RenderManager::get_color()
    hue += GOLDEN_RATIO_CONJUGATE;
    hue = modulus(hue, 1);
     hsv.Hue = hue;
-    hsv.Saturation = 0.5;
+    hsv.Saturation = 0.9;
     hsv.Value = 0.95;
     return hsv_to_rgb(hsv);
 }

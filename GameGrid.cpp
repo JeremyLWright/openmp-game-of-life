@@ -140,22 +140,22 @@ uint32_t GameGrid::CountLivingNeighbors(size_t col, size_t row)
     uint32_t livingNeighbors = 0;
     
     bool* cellPtr = 0;
-    if(MovePtr(&cellPtr, UP, col, row))
-        *cellPtr ? livingNeighbors++ : 0;
-    if(MovePtr(&cellPtr, DOWN, col, row))
-        *cellPtr ? livingNeighbors++ : 0;
-    if(MovePtr(&cellPtr, LEFT, col, row))
-        *cellPtr ? livingNeighbors++ : 0;
-    if(MovePtr(&cellPtr, RIGHT, col, row))
-        *cellPtr ? livingNeighbors++ : 0;
-    if(MovePtr(&cellPtr, UP_LEFT, col, row))
-        *cellPtr ? livingNeighbors++ : 0;
-    if(MovePtr(&cellPtr, UP_RIGHT, col, row))
-        *cellPtr ? livingNeighbors++ : 0;
-    if(MovePtr(&cellPtr, DOWN_LEFT, col, row))
-        *cellPtr ? livingNeighbors++ : 0;
-    if(MovePtr(&cellPtr, DOWN_RIGHT, col, row))
-        *cellPtr ? livingNeighbors++ : 0;
+    if(row != 0 && Grid[col][row-1] == true) //UP
+        livingNeighbors++;
+    if(row != GetGridSize()-1 && Grid[col][row+1] == true) //DOWN
+        livingNeighbors++;
+    if(col != GetGridSize()-1 && Grid[col+1][row] == true) // RIGHT
+        livingNeighbors++;
+    if(col != 0 && Grid[col-1][row] == true) //LEFT
+        livingNeighbors++;
+    if(row != 0 && col != GetGridSize()-1 && Grid[col+1][row-1] == true) //UP RIGHT
+        livingNeighbors++;
+    if(row != 0 && col != 0 && Grid[col-1][row-1] == true) //UP LEFT
+        livingNeighbors++;
+    if(row != GetGridSize()-1 && col != GetGridSize() - 1 && Grid[col+1][row+1] == true) //DOWN RIGHT
+        livingNeighbors++;
+    if(row != GetGridSize()-1 && col != 0 && Grid[col-1][row+1] == true) //DOWN LEFT
+        livingNeighbors++;
     
     return livingNeighbors;
 }
@@ -169,9 +169,11 @@ void GameGrid::CalculateGeneration()
         for(size_t row = 0; row < GetGridSize(); ++row)
         {
             uint32_t livingNeighbors = CountLivingNeighbors(col, row);
+#ifdef DEBUG
             cout << "Row: " << row 
                 << "Col: " << col
                 << ": " << livingNeighbors << endl;
+#endif
             if(Grid[col][row]) //If Cell is alive
             {
                 if(livingNeighbors <= 1)
@@ -207,7 +209,8 @@ void GameGrid::CalculateGeneration()
 
         }
     }
-
+    if(delayedUpdates.size() == 0)
+        cout << "Game Ended." << endl;
     // Commit all updates to the grid.
     for(list<Update>::const_iterator i = delayedUpdates.begin();
             i != delayedUpdates.end();
