@@ -5,8 +5,8 @@
 using namespace std;
 
 RenderManager::RenderManager(GameGrid::Ptr grid)
-    : WINDOW_WIDTH(640), 
-    WINDOW_HEIGHT(480), 
+    : WINDOW_WIDTH((grid->GetGridSize()-1)*10), 
+    WINDOW_HEIGHT((grid->GetGridSize()-1)*10), 
     WINDOW_TITLE("Mega-Awesome Game of Life"),
     model(grid),
     GOLDEN_RATIO_CONJUGATE(0.618033988749895)
@@ -35,30 +35,38 @@ RenderManager::~RenderManager(){}
 
 bool RenderManager::render_frame()
 {
-    if(SDL_PollEvent(&event))
-    {
-        if(event.type == SDL_QUIT)
-        {
-            close_requested = true;
-            SDL_Quit();
-            return close_requested;
-        }
-    }
-
-    //SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 255, 255, 255));
-    //render_region();
+    SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 255, 255, 255));
     for(size_t col = 0; col < model->GetGridSize()-1; ++col)
     {
+        
         for(size_t row = 0; row < model->GetGridSize()-1; ++row)
         { 
             RGBColor rgb = get_color();
             if(model->GetCellValue(col, row))
                 boxRGBA(screen, col*10, row*10, (col+1)*10, (row+1)*10, 
                      rgb.Red, rgb.Green, rgb.Blue, 255);
+            rectangleRGBA(screen, col*10, row*10, (col+1)*10, (row+1)*10, 
+                    0, 0, 0, 255);
         }
     }
     /* Render Cell here */
     SDL_Flip(screen);
+    const int FRAME_TIME = 250;
+    static int previous_time = SDL_GetTicks();
+    while(FRAME_TIME > (SDL_GetTicks() - previous_time))
+    {
+        if(SDL_PollEvent(&event))
+        {
+            if(event.type == SDL_QUIT)
+            {
+                close_requested = true;
+                SDL_Quit();
+                return close_requested;
+            }
+        }
+
+    }
+    previous_time = SDL_GetTicks();
     return close_requested;
 
 }
@@ -80,8 +88,8 @@ void RenderManager::render_region()
 {
     RGBColor rgb = get_color();
     rectangleRGBA( screen,
-            1, 1,
-            20, 40,
+            0, 0,
+            10, 40,
             rgb.Red, rgb.Green, rgb.Blue, 255);
     return;
 }
