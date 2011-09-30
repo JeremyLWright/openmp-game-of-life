@@ -44,7 +44,10 @@ void GameGridParallelRow::CalculateGeneration()
                     Update u;
                     u.updateValue = false;
                     u.position = &(Grid[col][row]);
+#pragma omp critical
+                    {
                     delayedUpdates.push_back(u);
+                    }
                 }
 
                 if(livingNeighbors >= 4)
@@ -53,7 +56,10 @@ void GameGridParallelRow::CalculateGeneration()
                     Update u;
                     u.updateValue = false;
                     u.position = &(Grid[col][row]);
+#pragma omp critical 
+                    {
                     delayedUpdates.push_back(u);
+                    }
                 }
                 /* else remain alive */
             }
@@ -65,7 +71,10 @@ void GameGridParallelRow::CalculateGeneration()
                     Update u;
                     u.updateValue = true;
                     u.position = &(Grid[col][row]);
+#pragma omp critical
+                    {
                     delayedUpdates.push_back(u);
+                    }
                 }
             }
 

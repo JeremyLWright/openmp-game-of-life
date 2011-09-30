@@ -55,8 +55,9 @@ int main(int argc, const char *argv[])
     }
 
     cout << "Parsing the input file." << endl;
-//    GameGrid::Ptr game = GameGrid::construct(filename, n);
-    GameGrid::Ptr game = GameGridParallel::construct(filename, n);
+   // GameGrid::Ptr game = GameGrid::construct(filename, n);
+    GameGrid::Ptr game = GameGridParallelRow::construct(filename, n);
+//    GameGrid::Ptr game = GameGridParallel::construct(filename, n);
     game->ParseInputFile();
     cout << "Input File Complete." << endl;
 #ifdef RENDER
