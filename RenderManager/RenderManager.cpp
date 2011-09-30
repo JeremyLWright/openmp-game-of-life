@@ -2,11 +2,18 @@
 #include <SDL/SDL_gfxPrimitives.h>
 #include <time.h>
 #include <list>
+#include <map>
 using namespace std;
 
+namespace {
+   int const CellSize = 4;
+   inline int pixelhash(int col, int row) { return ((col * 10) + row); }
+   map<int, RGBColor> colorMap;
+}
+
 RenderManager::RenderManager(GameGrid::Ptr grid)
-    : WINDOW_WIDTH((grid->GetGridSize()-1)*10), 
-    WINDOW_HEIGHT((grid->GetGridSize()-1)*10), 
+    : WINDOW_WIDTH((grid->GetGridSize()-1)*CellSize), 
+    WINDOW_HEIGHT((grid->GetGridSize()-1)*CellSize), 
     WINDOW_TITLE("Mega-Awesome Game of Life"),
     model(grid),
     GOLDEN_RATIO_CONJUGATE(0.618033988749895)
@@ -20,6 +27,22 @@ RenderManager::RenderManager(GameGrid::Ptr grid)
     //database_connection = spatial_db.get_database();
 
    hue = (rand()%256)/RAND_MAX;
+
+   RGBColor temp = {240, 128, 0};
+   /* Initialize all colors */
+   for(size_t col = 0; col < model->GetGridSize()-1; ++col)
+   {
+       for(size_t row = 0; row < model->GetGridSize()-1; ++row)
+       {
+
+           temp.Red = temp.Red++%256;
+           temp.Green = temp.Green++%256;
+           temp.Blue = temp.Blue++%256;
+
+           colorMap[pixelhash(col, row)] = temp;
+       }
+   }
+
 
 }
 
@@ -36,22 +59,23 @@ RenderManager::~RenderManager(){}
 bool RenderManager::render_frame()
 {
     SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 255, 255, 255));
-    RGBColor rgb = get_color();
     for(size_t col = 0; col < model->GetGridSize()-1; ++col)
     {
         
         for(size_t row = 0; row < model->GetGridSize()-1; ++row)
         { 
+            RGBColor rgb = colorMap[pixelhash(col,row)];
             if(model->GetCellValue(col, row))
-                boxRGBA(screen, col*10, row*10, (col+1)*10, (row+1)*10, 
+                boxRGBA(screen, col*CellSize, row*CellSize, (col+1)*CellSize, (row+1)*CellSize, 
                      rgb.Red, rgb.Green, rgb.Blue, 255);
-            rectangleRGBA(screen, col*10, row*10, (col+1)*10, (row+1)*10, 
+           if(CellSize >= 4) 
+            rectangleRGBA(screen, col*CellSize, row*CellSize, (col+1)*CellSize, (row+1)*CellSize, 
                     195, 195, 195, 255);
         }
     }
     /* Render Cell here */
     SDL_Flip(screen);
-    const int FRAME_TIME = 100;
+    const int FRAME_TIME = 10;
     static int previous_time = SDL_GetTicks();
     while(FRAME_TIME > (SDL_GetTicks() - previous_time))
     {

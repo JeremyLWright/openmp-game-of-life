@@ -5,8 +5,8 @@ add_subdirectory(RenderManager)
 include_directories(".")
 
 
-SET(CMAKE_CXX_FLAGS_DEBUG "-ggdb -g3 -Wall")
-SET(CMAKE_CXX_FLAGS_RELEASE "-O3")
+SET(CMAKE_CXX_FLAGS_DEBUG "-ggdb -g3 -Wall -pedantic -fopenmp")
+SET(CMAKE_CXX_FLAGS_RELEASE "-O3 -fopenmp")
 
 ExternalProject_Get_Property(SDL_gfx-2.0 INSTALL_DIR)
 include_directories("${INSTALL_DIR}/include")

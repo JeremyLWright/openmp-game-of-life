@@ -27,13 +27,14 @@ void print_usage()
 {
     cout << "Game of Life Usage:" << endl;
     cout << "\trun-life n file" << endl;
-    cout << "\t\tn := size of the n x n grid" << endl;
-    cout << "\t\tfile := some file name or the keyword random" << endl;
+    cout << "\t\tn := size of the n x n grid." << endl;
+    cout << "\t\tfile := some file name or the keyword random." << endl;
+    cout << "\t\tgenerations := Number of generations to run." << endl;
 }
 
 int main(int argc, const char *argv[])
 {
-    if(argc != 3)
+    if(argc != 4)
     {
         print_usage();
         exit(1);
@@ -42,6 +43,7 @@ int main(int argc, const char *argv[])
     int n;
     ifstream fin;
     n = atoi(argv[1]);
+    int generations = atoi(argv[3]);
     string filename;
     if(strncmp("random", argv[2], sizeof("random")) == 0)
     {
@@ -57,7 +59,7 @@ int main(int argc, const char *argv[])
 #ifdef RENDERING
     cout << "Welcome. Rendering World. Please Stand-by" << endl;    
     RenderManager::Ptr rm = RenderManager::construct(game);
-    while(1)
+    while(generations--)
     {
         game->CalculateGeneration();
         if(rm->render_frame())
