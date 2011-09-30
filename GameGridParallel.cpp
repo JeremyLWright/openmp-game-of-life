@@ -24,8 +24,12 @@ GameGridParallel::~GameGridParallel()
 
 void GameGridParallel::CalculateGeneration()
 {
-    list<Update> delayedUpdates;
-#pragma omp parallel for shared(delayedUpdates)
+    vector<Update> delayedUpdates[omp_get_max_threads()];
+#pragma omp parallel for
+    for(int i = 0; i < omp_get_max_threads(); i++)
+        delayedUpdates[i].reserve(GetGridSize());
+
+#pragma omp parallel for
    for(size_t row = 0; row < GetGridSize(); ++row)
     {
         for(size_t col = 0; col < GetGridSize(); ++col)
@@ -44,10 +48,7 @@ void GameGridParallel::CalculateGeneration()
                     Update u;
                     u.updateValue = false;
                     u.position = &(Grid[col][row]);
-#pragma omp critical 
-                    {
-                    delayedUpdates.push_back(u);
-                    }
+                    delayedUpdates[omp_get_thread_num()].push_back(u);
                 }
 
                 if(livingNeighbors >= 4)
@@ -56,10 +57,7 @@ void GameGridParallel::CalculateGeneration()
                     Update u;
                     u.updateValue = false;
                     u.position = &(Grid[col][row]);
-#pragma omp critical 
-                    {
-                    delayedUpdates.push_back(u);
-                    }
+                    delayedUpdates[omp_get_thread_num()].push_back(u);
                 }
                 /* else remain alive */
             }
@@ -71,17 +69,15 @@ void GameGridParallel::CalculateGeneration()
                     Update u;
                     u.updateValue = true;
                     u.position = &(Grid[col][row]);
-#pragma omp critical 
-                    {
-                    delayedUpdates.push_back(u);
-                    }
+                    delayedUpdates[omp_get_thread_num()].push_back(u);
                 }
             }
 
         }
     }  // Commit all updates to the grid.
-    for(list<Update>::const_iterator i = delayedUpdates.begin();
-            i != delayedUpdates.end();
+   for(int t = 0; t < omp_get_max_threads() ; ++t)
+    for(vector<Update>::const_iterator i = delayedUpdates[t].begin();
+            i != delayedUpdates[t].end();
             ++i)
     {
         *(i->position) = i->updateValue;
