@@ -31,11 +31,12 @@ void print_usage()
     cout << "\t\tn := size of the n x n grid." << endl;
     cout << "\t\tfile := some file name or the keyword random." << endl;
     cout << "\t\tgenerations := Number of generations to run." << endl;
+    cout << "\t\tn := Threading Model: {0: single, 1: rows, 2: col, 3: full}" << endl;
 }
 
 int main(int argc, const char *argv[])
 {
-    if(argc != 4)
+    if(argc != 5)
     {
         print_usage();
         exit(1);
@@ -45,19 +46,40 @@ int main(int argc, const char *argv[])
     ifstream fin;
     n = atoi(argv[1]);
     int generations = atoi(argv[3]);
-    string filename;
+    string filename(argv[2]);
     if(strncmp("random", argv[2], sizeof("random")) == 0)
     {
         cout << "Using Random Configuration" << endl;
         InputGenerator::Ptr ig = InputGenerator::construct();
         filename = ig->createFile(n);
-        cout << "Created: " << filename << endl;
     }
+        cout << "Using: " << filename << endl;
 
     cout << "Parsing the input file." << endl;
-   // GameGrid::Ptr game = GameGrid::construct(filename, n);
-    GameGrid::Ptr game = GameGridParallelRow::construct(filename, n);
-//    GameGrid::Ptr game = GameGridParallel::construct(filename, n);
+    GameGrid::Ptr game;
+   switch(atoi(argv[4]))
+   {
+       case 0:
+           game = GameGrid::construct(filename, n);
+           cout << "Single Threaded" << endl;
+           break;
+       case 1:
+           game = GameGridParallelRow::construct(filename, n);
+           cout << "Row Model" << endl;
+           break;
+       case 2: 
+           game = GameGridParallelCol::construct(filename, n);
+           cout << "Col Model" << endl;
+           break;
+       case 3:
+           game = GameGridParallel::construct(filename, n);
+           cout << "Full Model" << endl;
+           break;
+       default:
+           print_usage();
+           exit(-1);
+            break;
+   }
     game->ParseInputFile();
     cout << "Input File Complete." << endl;
 #ifdef RENDER
