@@ -37,7 +37,12 @@ GameGrid::Ptr GameGrid::construct(string filename, size_t size)
     return c;
 }
 
-GameGrid::~GameGrid() {}
+GameGrid::~GameGrid() 
+{
+    for(size_t i = 0; i < GetGridSize(); ++i)
+        delete [] Grid[i];
+    delete [] Grid;
+}
 
 GameGrid::GameGrid(string filename, size_t size)
 {

@@ -75,6 +75,7 @@ bool RenderManager::render_frame()
     }
     /* Render Cell here */
     SDL_Flip(screen);
+#ifdef FRAME_LIMIT
     const int FRAME_TIME = 10;
     static int previous_time = SDL_GetTicks();
     while(FRAME_TIME > (SDL_GetTicks() - previous_time))
@@ -91,6 +92,7 @@ bool RenderManager::render_frame()
 
     }
     previous_time = SDL_GetTicks();
+#endif
     return close_requested;
 
 }

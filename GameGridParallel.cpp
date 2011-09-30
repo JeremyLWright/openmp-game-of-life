@@ -1,5 +1,8 @@
 #include "GameGridParallel.h"
 #include <list>
+extern "C" {
+#include <omp.h>
+}
 using namespace std;
 
 GameGridParallel::Ptr GameGridParallel::construct(string filename, size_t size)
@@ -22,7 +25,7 @@ GameGridParallel::~GameGridParallel()
 void GameGridParallel::CalculateGeneration()
 {
     list<Update> delayedUpdates;
-#pragma omp parallel for shared(delayedUpdates) private(col, row)
+#pragma omp parallel for shared(delayedUpdates)
    for(size_t row = 0; row < GetGridSize(); ++row)
     {
         for(size_t col = 0; col < GetGridSize(); ++col)

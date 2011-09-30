@@ -24,8 +24,6 @@ using std::endl;
 using std::cin;
 using std::ifstream;
 
-#define RENDERING
-
 void print_usage()
 {
     cout << "Game of Life Usage:" << endl;
@@ -60,17 +58,21 @@ int main(int argc, const char *argv[])
 //    GameGrid::Ptr game = GameGrid::construct(filename, n);
     GameGrid::Ptr game = GameGridParallel::construct(filename, n);
     game->ParseInputFile();
-#ifdef RENDERING
-    cout << "Welcome. Rendering World. Please Stand-by" << endl;    
+    cout << "Input File Complete." << endl;
+#ifdef RENDER
+    cout << "Welcome. Rendering World. Please Stand-by" << endl;
     RenderManager::Ptr rm = RenderManager::construct(game);
+#endif 
     while(generations--)
     {
+        cout << "Generation: " << generations << endl;
         game->CalculateGeneration();
+#ifdef RENDER
         if(rm->render_frame())
             break;
+#endif
         
 
     }
-#endif
     return 0;
 }

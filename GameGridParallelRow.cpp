@@ -1,4 +1,7 @@
 #include "GameGridParallelRow.h"
+extern "C" {
+#include <omp.h>
+}
 #include <list>
 using namespace std;
 
@@ -24,7 +27,7 @@ void GameGridParallelRow::CalculateGeneration()
     list<Update> delayedUpdates;
    for(size_t row = 0; row < GetGridSize(); ++row)
     {
-#pragma omp parallel for shared(delayedUpdates) private(col)
+#pragma omp parallel for shared(delayedUpdates) private(row)
         for(size_t col = 0; col < GetGridSize(); ++col)
         {
             uint32_t livingNeighbors = CountLivingNeighbors(col, row);
