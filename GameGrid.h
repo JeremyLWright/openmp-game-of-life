@@ -24,19 +24,22 @@ public:
     static GameGrid::Ptr construct(string filename, size_t size);
     virtual ~GameGrid();
     virtual void ParseInputFile();
-    void CalculateGeneration();
+    virtual void CalculateGeneration();
     virtual bool GetCellValue(size_t col, size_t row);
     virtual size_t GetGridSize();
 protected:
+    struct Update {
+        bool updateValue;
+        bool* position;
+    };
     virtual vector<bool> tokenize(string);
     bool MovePtr(bool** cellPtr, Direction direction, size_t col, size_t row);
     uint32_t CountLivingNeighbors(size_t col, size_t row);
     bool** Grid;
     size_t gridSize;
-    
-private:
-    GameGrid(string filename, size_t size);
     string filename;
+    GameGrid(string filename, size_t size);
+private:
     GameGrid::WeakPtr self;
     
 };

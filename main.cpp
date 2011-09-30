@@ -14,6 +14,9 @@
 #include <iostream>
 #include <fstream>
 #include "GameGrid.h"
+#include "GameGridParallelRow.h"
+#include "GameGridParallelCol.h"
+#include "GameGridParallel.h"
 #include "RenderManager/RenderManager.h"
 #include "InputGenerator.h"
 using std::cout;
@@ -54,7 +57,8 @@ int main(int argc, const char *argv[])
     }
 
     cout << "Parsing the input file." << endl;
-    GameGrid::Ptr game = GameGrid::construct(filename, n);
+//    GameGrid::Ptr game = GameGrid::construct(filename, n);
+    GameGrid::Ptr game = GameGridParallel::construct(filename, n);
     game->ParseInputFile();
 #ifdef RENDERING
     cout << "Welcome. Rendering World. Please Stand-by" << endl;    

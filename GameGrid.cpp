@@ -28,10 +28,6 @@ namespace {
 		return !(iss >> f >> t).fail();
 	}
     
-    struct Update {
-        bool updateValue;
-        bool* position;
-    };
 }
 
 GameGrid::Ptr GameGrid::construct(string filename, size_t size)
@@ -78,61 +74,6 @@ void GameGrid::ParseInputFile()
             Grid[col][row] = *element;
         }
     }
-}
-
-bool GameGrid::MovePtr(bool** cellPtr, Direction direction, size_t col, size_t row)
-{
-    switch(direction)
-    {
-        case UP:
-            if(row == 0)
-                *cellPtr = 0; //Contribute nothing.
-            else
-                *cellPtr = &(Grid[col][row-1]);
-            break;
-        case UP_RIGHT:
-            if(row == 0 || col == GetGridSize()-1)
-                *cellPtr = 0;
-            else
-                *cellPtr = &(Grid[col+1][row-1]);
-        case UP_LEFT:
-            if(row == 0 || col == 0)
-                *cellPtr = 0;
-            else
-                *cellPtr = &(Grid[col-1][row-1]);
-        case DOWN:
-            if(row == GetGridSize()-1)
-                *cellPtr = 0;
-            else
-                *cellPtr = &(Grid[col][row+1]);
-            break;
-        case DOWN_RIGHT:
-            if(row == GetGridSize()-1 || col == GetGridSize()-1)
-                *cellPtr = 0;
-            else
-                *cellPtr = &(Grid[col+1][row+1]);
-        case DOWN_LEFT:
-            if(row == GetGridSize()-1 || col == 0)
-                *cellPtr = 0;
-            else
-                *cellPtr = &(Grid[col-1][row+1]);
-        case RIGHT:
-            if(col == GetGridSize()-1)
-                *cellPtr = 0;
-            else
-                *cellPtr = &(Grid[col+1][row]);
-            break;
-        case LEFT:
-            if(col == 0)
-                *cellPtr = 0;
-            else
-                *cellPtr = &(Grid[col-1][row]);
-            break;
-    }
-
-    return (*cellPtr != 0) ? true : false;
-
-
 }
 
 uint32_t GameGrid::CountLivingNeighbors(size_t col, size_t row)
