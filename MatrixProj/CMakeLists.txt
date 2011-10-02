@@ -1,7 +1,5 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
-project(ParallelLife)
-find_package(Boost 1.42 REQUIRED)
-#add_subdirectory(RenderManager)
+project(BalancedThreads)
 include_directories(".")
 
 SET(CMAKE_C_COMPILER "/opt/intel/composer_xe_2011_sp1/bin/icc")
@@ -10,16 +8,12 @@ SET(CMAKE_BUILD_TYPE DEBUG)
 SET(CMAKE_CXX_FLAGS_DEBUG "-debug all -openmp")
 SET(CMAKE_CXX_FLAGS_RELEASE "-O3 -openmp")
 
-add_definitions(-DNRENDER)
-#ExternalProject_Get_Property(SDL_gfx-2.0 INSTALL_DIR)
-include_directories("${INSTALL_DIR}/include")
-link_directories(${INSTALL_DIR}/lib)
 link_directories(/opt/intel/composer_xe_2011_sp1.6.233/compiler/lib/intel64/)
-add_executable(run-life main.cpp GameGrid.cpp GameGridParallelRow.cpp InputGenerator.cpp GameGridParallel.cpp GameGridParallelCol.cpp)
-target_link_libraries(run-life iomp5)
-#target_link_libraries(run-life RenderManager gomp)
+add_executable(threads main.cpp)
+target_link_libraries(threads iomp5)
 
-
+add_executable(input-mm mm.cc)
+target_link_libraries(input-mm iomp5)
 
 
 
