@@ -86,9 +86,15 @@ int main(int argc, const char *argv[])
     cout << "Welcome. Rendering World. Please Stand-by" << endl;
     RenderManager::Ptr rm = RenderManager::construct(game);
 #endif 
+    size_t const total_generations = generations;
+    int last_percent = 0;
     while(generations--)
     {
-        cout << "Generation: " << generations << endl;
+        int percent = 
+            100 - static_cast<int>(static_cast<double>(generations)/static_cast<double>(total_generations)*100);
+        if(percent > last_percent)
+            cout << "Generation: " <<  percent << "%" << endl;
+        last_percent = percent;
         game->CalculateGeneration();
 #ifdef RENDER
         if(rm->render_frame())
