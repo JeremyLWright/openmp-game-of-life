@@ -12,6 +12,7 @@
 #include <sstream>
 #include <iterator>
 #include <string.h>
+#include <omp.h>
 
 using namespace std;
 
@@ -35,6 +36,7 @@ void freeMatrix(Matrix A, size_t size)
 
 void printMatrix(Matrix A, size_t size)
 {
+#if 0 
     for(int i = 0; i < size; ++i)
     {
         cout << "[";
@@ -44,6 +46,7 @@ void printMatrix(Matrix A, size_t size)
         }
         cout << " ]" << endl;
     }
+#endif
 }
 
 void loadMatrix(int* data, Matrix A, size_t size)
@@ -103,6 +106,8 @@ void parseInputFile(string filename, size_t size, Matrix& A, Matrix& B)
 
 void MultiplyMatrix(Matrix const A, Matrix const B, Matrix& C, size_t size)
 {
+    int const chunk = size%omp_get_num_threads();
+#pragma omp parallel for schedule(dynamic, chunk)
     for(int i = 0; i < size; ++i)
     {
         for(int j=0; j < size; ++j)
@@ -124,7 +129,6 @@ int main(int argc, const char *argv[])
     parseInputFile(string(argv[1]), size, A, B);
 
     Matrix C = initMatrix(size);
-
     printMatrix(A, size);
     cout << endl << endl;
     printMatrix(B, size);
