@@ -107,7 +107,7 @@ void parseInputFile(string filename, size_t size, Matrix& A, Matrix& B)
 void MultiplyMatrix(Matrix const A, Matrix const B, Matrix& C, size_t size)
 {
     int const chunk = size%omp_get_num_threads();
-#pragma omp parallel for schedule(dynamic, chunk)
+#pragma omp parallel for 
     for(int i = 0; i < size; ++i)
     {
         for(int j=0; j < size; ++j)
