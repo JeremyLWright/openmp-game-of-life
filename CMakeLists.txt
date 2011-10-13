@@ -13,6 +13,7 @@ else()
     SET(CMAKE_CXX_FLAGS_DEBUG "-g3 -ggdb -Wall -fopenmp")
 endif()
 
+    include_directories(".")
 if(${RENDER})
     add_subdirectory(RenderManager)
     ExternalProject_Get_Property(SDL_gfx-2.0 INSTALL_DIR)
