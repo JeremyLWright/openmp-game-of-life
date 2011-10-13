@@ -12,8 +12,6 @@ else()
     message("Using GCC")
     SET(CMAKE_CXX_FLAGS_DEBUG "-g3 -ggdb -Wall -fopenmp")
 endif()
-add_subdirectory(RenderManager)
-include_directories(".")
 
 if(${RENDER})
     add_subdirectory(RenderManager)
