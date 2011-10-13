@@ -1,5 +1,7 @@
-\documentclass[journal,10pt,draftcls]{IEEEtran}
+\documentclass[journal,10pt,onecolumn,draftcls]{IEEEtran}
 \usepackage{listings}
+\usepackage{wrapfig}
+\usepackage{graphicx}
 % correct bad hyphenation here
 \hyphenation{op-tical net-works semi-conduc-tor}
 
@@ -52,6 +54,92 @@ overriding a few key methods, I could dynamically swap out different threading m
 I defined 3 threading models to test OpenMP's performance impact. I defined a threading model
 per how I decomposed the data.  I use 3 segmentations division by rows, division by columns, 
 division by regions
+
+
+
+%
+%\begin{figure}[htb]
+%\label{fig:inspector_with_debug_symbols}
+%\begin{center}
+%\includegraphics[width=0.5\textwidth]{figures/file8VlHl6_Debug_Symbols.png}
+%\caption{Intel Inspector with Debug Symbols enabled.}
+%\end{center}
+%\end{figure}
+
+
+\begin{figure}[htb]
+\label{fig:inspector_clean_memory}
+\begin{center}
+\includegraphics[width=0.5\textwidth]{figures/ChangeSet14_Memory.png}
+\caption{Game of Life: All Memory Leaks Fixed.}
+\end{center}
+\end{figure}
+
+\begin{figure}[htb]
+\label{fig:inspector_clean_deadlocks}
+\begin{center}
+\includegraphics[width=0.5\textwidth]{figures/ChangeSet14.png}
+\caption{Game of Life: All Deadlocks and Data Races Fixed.}
+\end{center}
+\end{figure}
+
+\begin{figure}[htb]
+\label{fig:inspector_data_race_allocator}
+\begin{center}
+\includegraphics[width=0.5\textwidth]{figures/Data_Race_Anaylsis.png}
+\caption{Game of Life: Data Race found on the Update List.}
+\end{center}
+\end{figure}
+
+\begin{figure}[htb]
+\label{fig:matrix_dynamic_schedule_cpu_usage}
+\begin{center}
+\includegraphics[width=0.8\textwidth]{figures/matrix_dynamic_schedule_cpu_usage.png}
+\caption{Matrix Multiply CPU Usage using Dynamic Thread Balancing.}
+\end{center}
+\end{figure}
+
+\begin{figure}[htb]
+\label{fig:matrix_dynamic_schedule_concurrency}
+\begin{center}
+\includegraphics[width=0.8\textwidth]{figures/matrix_dynamic_schedule_thread_concurrency.png}
+\caption{Matrix Multiply Thread Concurrency using Dynamic Thread Balancing.}
+\end{center}
+\end{figure}
+
+\begin{figure}[htb]
+\label{fig:matrix_wo_dynamic_schedule_cpu_usage}
+\begin{center}
+\includegraphics[width=0.8\textwidth]{figures/matrix_without_dynamic_schedule_cpu_usage.png}
+\caption{Matrix Multiply CPU Utilization using Standard Parallel for.}
+\end{center}
+\end{figure}
+
+\begin{figure}[htb]
+\label{fig:matrix_wo_dynamic_schedule_concurrency}
+\begin{center}
+\includegraphics[width=0.9\textwidth]{figures/matrix_without_dynamic_schedule_thread_concurrency.png}
+\caption{Matrix Multiply Thread Concurrency using with Standard Parallel for.}
+\end{center}
+\end{figure}
+
+
+
+\begin{figure}[htb]
+\label{fig:12_threaded_matrix_cpu_usage}
+\begin{center}
+\includegraphics[width=0.8\textwidth]{figures/12_threaded_matrix_thread_cpu_usage_histogram.png}
+\caption{CPU Utilization forcing 12 threads.}
+\end{center}
+\end{figure}
+
+\begin{figure}[htb]
+\label{fig:12_threaded_matrix_concurrent}
+\begin{center}
+\includegraphics[width=0.8\textwidth]{figures/12_threaded_matrix_thread_concurrent_histogram.png}
+\caption{Thread Concurrency forcing 12 threads.}
+\end{center}
+\end{figure}
 
 \subsection{Intertask Dependency}
 
@@ -126,6 +214,17 @@ profile sections that the will be reported separately.
 It's great tool suite. I don't have an Intel processor, so some of the profilers 
 wouldn't work, and the errors were non-obvious, but overall the tool is great, and 
 I really like that it runs on Linux.
+
+\begin{figure}[htb]
+\label{fig:intentional_memory_leak}
+\begin{center}
+\includegraphics[width=0.8\textwidth]{figures/fileMep7k0_Memory_Analysis.png}
+\caption{Intel Inspector with Debug Symbols enabled.}
+\end{center}
+\end{figure}
+
+
+\listoffigures
 
 % that's all folks
 \end{document}
