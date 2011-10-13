@@ -2,6 +2,7 @@
 \usepackage{listings}
 \usepackage{wrapfig}
 \usepackage{graphicx}
+\usepackage{float}
 % correct bad hyphenation here
 \hyphenation{op-tical net-works semi-conduc-tor}
 
@@ -24,7 +25,7 @@
 \begin{abstract}
 %\boldmath
 Parallel code is difficult to write and test, however the OpenMP's set of 
-extenstions allow one to add coarse grained parallelism to a system. This paper 
+extensions allow one to add coarse grained parallelism to a system. This paper 
 is a look transforming a formerly serial program into a highly parallel one using 
 only OpenMP constructs.
 \end{abstract}
@@ -35,16 +36,18 @@ only OpenMP constructs.
 
 \IEEEPARstart{O}{penMP} allows one to quickly sprinkle bits of parallelism throughout
 a serial program and using a profiler such as Intel's Parallel Studio Amplifier, measure 
-the speedup.  OpenMP is not a panacea for all parallelism, it only operates over a given 
-scope, and you cannot use the parallel for with a C++ iterator.  However despite these 
-subtle limitations, OpenMP is an extrememly powerful platform for introducing parallelism
-into serial applications and algorithms.
+the speedup.  OpenMP, however, is not a panacea for all parallelism. For example, OpenMP primitives
+cannot parallelize C++ iterators.  Despite these 
+subtle limitations, OpenMP is an extremely powerful platform for introducing parallelism
+into applications and algorithms.  We use Conway's game of life to demonstrate how 
+data decomposition is an important component in accelerating parallel programs. Then we 
+use intentionally unbalanced matrices to demonstrate OpenMP's loading mechanisms.
 
 \hfill \today
 
 \section{Game of Life}
 Conway's Game of Life is a dramatic illustration that a seemingly complex system
-such as cell mitosis can be goverened by a set of fairly simple rules. As a demonstration of
+such as cell mitosis can be governed by a set of fairly simple rules. As a demonstration of
 OpenMP's simplicity I implemented a single class implementing the game of life. Then by 
 overriding a few key methods, I could dynamically swap out different threading models.
 
@@ -56,97 +59,46 @@ per how I decomposed the data.  I use 3 segmentations division by rows, division
 division by regions
 
 
+\subsection{Intertask Dependency}
 
 %
-%\begin{figure}[htb]
+%\begin{figure*}[htb]
 %\label{fig:inspector_with_debug_symbols}
 %\begin{center}
 %\includegraphics[width=0.5\textwidth]{figures/file8VlHl6_Debug_Symbols.png}
 %\caption{Intel Inspector with Debug Symbols enabled.}
 %\end{center}
-%\end{figure}
+%\end{figure*}
 
 
-\begin{figure}[htb]
-\label{fig:inspector_clean_memory}
+\begin{figure*}[!t]
 \begin{center}
 \includegraphics[width=0.5\textwidth]{figures/ChangeSet14_Memory.png}
 \caption{Game of Life: All Memory Leaks Fixed.}
+\label{fig:inspector_clean_memory}
 \end{center}
-\end{figure}
+\end{figure*}
 
-\begin{figure}[htb]
-\label{fig:inspector_clean_deadlocks}
+\begin{figure*}[!t]
 \begin{center}
 \includegraphics[width=0.5\textwidth]{figures/ChangeSet14.png}
 \caption{Game of Life: All Deadlocks and Data Races Fixed.}
+\label{fig:inspector_clean_deadlocks}
 \end{center}
-\end{figure}
+\end{figure*}
 
-\begin{figure}[htb]
-\label{fig:inspector_data_race_allocator}
+\begin{figure*}[!t]
 \begin{center}
 \includegraphics[width=0.5\textwidth]{figures/Data_Race_Anaylsis.png}
 \caption{Game of Life: Data Race found on the Update List.}
+\label{fig:inspector_data_race_allocator}
 \end{center}
-\end{figure}
-
-\begin{figure}[htb]
-\label{fig:matrix_dynamic_schedule_cpu_usage}
-\begin{center}
-\includegraphics[width=0.8\textwidth]{figures/matrix_dynamic_schedule_cpu_usage.png}
-\caption{Matrix Multiply CPU Usage using Dynamic Thread Balancing.}
-\end{center}
-\end{figure}
-
-\begin{figure}[htb]
-\label{fig:matrix_dynamic_schedule_concurrency}
-\begin{center}
-\includegraphics[width=0.8\textwidth]{figures/matrix_dynamic_schedule_thread_concurrency.png}
-\caption{Matrix Multiply Thread Concurrency using Dynamic Thread Balancing.}
-\end{center}
-\end{figure}
-
-\begin{figure}[htb]
-\label{fig:matrix_wo_dynamic_schedule_cpu_usage}
-\begin{center}
-\includegraphics[width=0.8\textwidth]{figures/matrix_without_dynamic_schedule_cpu_usage.png}
-\caption{Matrix Multiply CPU Utilization using Standard Parallel for.}
-\end{center}
-\end{figure}
-
-\begin{figure}[htb]
-\label{fig:matrix_wo_dynamic_schedule_concurrency}
-\begin{center}
-\includegraphics[width=0.9\textwidth]{figures/matrix_without_dynamic_schedule_thread_concurrency.png}
-\caption{Matrix Multiply Thread Concurrency using with Standard Parallel for.}
-\end{center}
-\end{figure}
-
-
-
-\begin{figure}[htb]
-\label{fig:12_threaded_matrix_cpu_usage}
-\begin{center}
-\includegraphics[width=0.8\textwidth]{figures/12_threaded_matrix_thread_cpu_usage_histogram.png}
-\caption{CPU Utilization forcing 12 threads.}
-\end{center}
-\end{figure}
-
-\begin{figure}[htb]
-\label{fig:12_threaded_matrix_concurrent}
-\begin{center}
-\includegraphics[width=0.8\textwidth]{figures/12_threaded_matrix_thread_concurrent_histogram.png}
-\caption{Thread Concurrency forcing 12 threads.}
-\end{center}
-\end{figure}
-
-\subsection{Intertask Dependency}
-
+\end{figure*}
 
 \section{Matrix Multiplication}
 
-\subsection{Dynamic Load Balance}
+
+\subsection{Manual Load Balance}
 
 \begin{equation}
 \sum\limits_{a}^b (i + 1) = \frac{-(a + b + 2)(a - b -1)}{2}
@@ -162,10 +114,31 @@ we have the following set of equations.
 & = & \frac{-(d + e + 2)(d - e -1)}{2} \\
 & = & \frac{-(e + 1999 + 2)(e - 1999 -1)}{2}
 \end{eqnarray}
-One could use Newton's method. This will determine the precise slice of columns which 
-will give an even split. This however is non-trivial. This bookkeeping has a diminishing 
-return since OpenMP makes this much simplier.
 
+\begin{figure*}[!t]
+\begin{center}
+\includegraphics[width=0.8\textwidth]{figures/matrix_without_dynamic_schedule_cpu_usage.png}
+\caption{Matrix Multiply CPU Utilization using Standard Parallel for.}
+\label{fig:matrix_wo_dynamic_schedule_cpu_usage}
+\end{center}
+\end{figure*}
+
+\begin{figure*}[!t]
+\begin{center}
+\includegraphics[width=0.9\textwidth]{figures/matrix_without_dynamic_schedule_thread_concurrency.png}
+\caption{Matrix Multiply Thread Concurrency using with Standard Parallel for.}
+\label{fig:matrix_wo_dynamic_schedule_concurrency}
+\end{center}
+\end{figure*}
+
+Applying this method results still results in a poor load balance.  
+Figure~\ref{fig:matrix_wo_dynamic_schedule_concurrency} demonstrates that the threads have a high 
+concurrency, but, as Figure~\ref{fig:matrix_wo_dynamic_schedule_cpu_usage} shows, a very poor CPU 
+utilization. I used Newton's method to find a solution. This will determine the precise slice of
+ columns which will give an even split. However the bookkeeping has a diminishing 
+return.  However OpenMP offers a simpler, automatic solution.
+
+\subsection{Dynamic Load Balance}
 OpenMP has a accepts a number of parameters called clauses. The Scheduling clause allows
 for a dynamic load balancing across the OpenMP threads. 
 
@@ -180,6 +153,40 @@ int const chunk = size%omp_get_num_threads();
 #pragma omp parallel for schedule(dynamic, chunk)
 \end{lstlisting}
 Solving this load imbalance is simple as code Listing \ref{lst:AutomaticLoadBalancing}.
+
+\begin{figure*}[!t]
+\begin{center}
+\includegraphics[width=0.8\textwidth]{figures/matrix_dynamic_schedule_cpu_usage.png}
+\caption{Matrix Multiply CPU Usage using Dynamic Thread Balancing.}
+\label{fig:matrix_dynamic_schedule_cpu_usage}
+\end{center}
+\end{figure*}
+
+\begin{figure*}[!t]
+\begin{center}
+\includegraphics[width=0.8\textwidth]{figures/matrix_dynamic_schedule_thread_concurrency.png}
+\caption{Matrix Multiply Thread Concurrency using Dynamic Thread Balancing.}
+\label{fig:matrix_dynamic_schedule_concurrency}
+\end{center}
+\end{figure*}
+
+
+
+\begin{figure*}[!t]
+\begin{center}
+\includegraphics[width=0.8\textwidth]{figures/12_threaded_matrix_thread_cpu_usage_histogram.png}
+\caption{CPU Utilization forcing 12 threads.}
+\label{fig:12_threaded_matrix_cpu_usage}
+\end{center}
+\end{figure*}
+
+\begin{figure*}[!t]
+\begin{center}
+\includegraphics[width=0.8\textwidth]{figures/12_threaded_matrix_thread_concurrent_histogram.png}
+\caption{Thread Concurrency forcing 12 threads.}
+\label{fig:12_threaded_matrix_concurrent}
+\end{center}
+\end{figure*}
 
 
 \section{Conclusion}
@@ -215,13 +222,13 @@ It's great tool suite. I don't have an Intel processor, so some of the profilers
 wouldn't work, and the errors were non-obvious, but overall the tool is great, and 
 I really like that it runs on Linux.
 
-\begin{figure}[htb]
-\label{fig:intentional_memory_leak}
+\begin{figure*}[!t]
 \begin{center}
 \includegraphics[width=0.8\textwidth]{figures/fileMep7k0_Memory_Analysis.png}
 \caption{Intel Inspector with Debug Symbols enabled.}
+\label{fig:intentional_memory_leak}
 \end{center}
-\end{figure}
+\end{figure*}
 
 
 \listoffigures
