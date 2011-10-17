@@ -19,6 +19,7 @@
 #include "GameGridParallel.h"
 #include "RenderManager/RenderManager.h"
 #include "InputGenerator.h"
+#include <omp.h>
 using std::cout;
 using std::endl;
 using std::cin;
@@ -42,6 +43,7 @@ int main(int argc, const char *argv[])
         exit(1);
     }
 
+    cout << "Threads " << omp_get_num_threads() << endl;
     int n;
     ifstream fin;
     n = atoi(argv[1]);
