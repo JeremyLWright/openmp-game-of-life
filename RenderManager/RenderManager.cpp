@@ -14,12 +14,12 @@ namespace {
 }
 
 RenderManager::RenderManager(GameGrid::Ptr grid)
-    : WINDOW_WIDTH((grid->GetGridSize()-1)*CellSize), 
+    : WINDOW_WIDTH(((grid->GetGridSize()-1)*CellSize)*2), 
     WINDOW_HEIGHT((grid->GetGridSize()-1)*CellSize), 
     WINDOW_TITLE("Mega-Awesome Game of Life"),
     model(grid),
     GOLDEN_RATIO_CONJUGATE(0.618033988749895),
-    NUM_THREADS(omp_get_num_threads())
+    NUM_THREADS(omp_get_max_threads())
 {
 
     SDL_Init(SDL_INIT_VIDEO);
@@ -83,7 +83,6 @@ bool RenderManager::render_frame()
         }
     }
     /* Render Cell here */
-    render_regions();
     SDL_Flip(screen);
 #ifdef FRAME_LIMIT
     const int FRAME_TIME = 10;
@@ -122,11 +121,20 @@ void RenderManager::render_cell()
 
 void RenderManager::render_regions()
 {
+
     for(size_t colorIdx = 0; colorIdx < NUM_THREADS; ++colorIdx)
     {
+        rectangleRGBA( screen,
+                0+10*colorIdx, 0+10*colorIdx,
+                10+10*colorIdx, 40+10*colorIdx,
+                threadColors[colorIdx].Red, threadColors[colorIdx].Green, threadColors[colorIdx].Blue, 255);
+        rectangleRGBA( screen,
+                0+10*colorIdx+1, 0+10*colorIdx+1,
+                10+10*colorIdx+1, 40+10*colorIdx+1,
+                threadColors[colorIdx].Red, threadColors[colorIdx].Green, threadColors[colorIdx].Blue, 255);
     rectangleRGBA( screen,
-            0+10*colorIdx, 0+10*colorIdx,
-            10+10*colorIdx, 40+10*colorIdx,
+            0+10*colorIdx+2, 0+10*colorIdx+2,
+            10+10*colorIdx+2, 40+10*colorIdx+2,
             threadColors[colorIdx].Red, threadColors[colorIdx].Green, threadColors[colorIdx].Blue, 255);
     }
     return;
@@ -136,8 +144,8 @@ void RenderManager::render_regions()
 RGBColor RenderManager::get_color()
 {
     HSVColor hsv;
-    
-   hue += GOLDEN_RATIO_CONJUGATE;
+
+    hue += GOLDEN_RATIO_CONJUGATE;
    hue = modulus(hue, 1);
     hsv.Hue = hue;
     hsv.Saturation = 0.9;

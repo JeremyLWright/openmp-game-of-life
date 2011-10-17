@@ -40,24 +40,24 @@ void GameGridParallel::CalculateGeneration()
                 << "Col: " << col
                 << ": " << livingNeighbors << endl;
 #endif
+            Update u;
+            u.threadId = omp_get_thread_num();
+            u.position = &(Grid[col][row]);
+            u.threadPosition = &(GridThreads[col][row]);
             if(Grid[col][row]) //If Cell is alive
             {
                 if(livingNeighbors <= 1)
                 {
                     //Kill Cell
-                    Update u;
                     u.updateValue = false;
-                    u.position = &(Grid[col][row]);
-                    delayedUpdates[omp_get_thread_num()].push_back(u);
+                    delayedUpdates[u.threadId].push_back(u);
                 }
 
                 if(livingNeighbors >= 4)
                 {
                     //Kill Cell
-                    Update u;
                     u.updateValue = false;
-                    u.position = &(Grid[col][row]);
-                    delayedUpdates[omp_get_thread_num()].push_back(u);
+                    delayedUpdates[u.threadId].push_back(u);
                 }
                 /* else remain alive */
             }
@@ -66,10 +66,8 @@ void GameGridParallel::CalculateGeneration()
                 if(livingNeighbors == 3)
                 {
                     //ConceiveCell
-                    Update u;
                     u.updateValue = true;
-                    u.position = &(Grid[col][row]);
-                    delayedUpdates[omp_get_thread_num()].push_back(u);
+                    delayedUpdates[u.threadId].push_back(u);
                 }
             }
 
@@ -81,6 +79,7 @@ void GameGridParallel::CalculateGeneration()
             ++i)
     {
         *(i->position) = i->updateValue;
+        *(i->threadPosition) = i->threadId;
     }
 
 }

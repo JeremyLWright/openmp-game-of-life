@@ -10,7 +10,7 @@ if(${USE_INTEL})
     link_directories(/opt/intel/composer_xe_2011_sp1.6.233/compiler/lib/intel64/)
 else()
     message("Using GCC")
-    SET(CMAKE_CXX_FLAGS_DEBUG "-g3 -ggdb -Wall -fopenmp")
+    SET(CMAKE_CXX_FLAGS "-g3 -ggdb -Wall -fopenmp")
 endif()
 
     include_directories(".")
