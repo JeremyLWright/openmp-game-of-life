@@ -3,6 +3,8 @@
 #include <time.h>
 #include <list>
 #include <map>
+#include <omp.h>
+#include <iostream>
 using namespace std;
 
 namespace {
@@ -12,12 +14,14 @@ namespace {
 }
 
 RenderManager::RenderManager(GameGrid::Ptr grid)
-    : WINDOW_WIDTH((grid->GetGridSize()-1)*CellSize), 
+    : WINDOW_WIDTH(((grid->GetGridSize()-1)*CellSize)*2), 
     WINDOW_HEIGHT((grid->GetGridSize()-1)*CellSize), 
     WINDOW_TITLE("Mega-Awesome Game of Life"),
     model(grid),
-    GOLDEN_RATIO_CONJUGATE(0.618033988749895)
+    GOLDEN_RATIO_CONJUGATE(0.618033988749895),
+    NUM_THREADS(omp_get_max_threads())
 {
+
     SDL_Init(SDL_INIT_VIDEO);
 
     screen = SDL_SetVideoMode(WINDOW_WIDTH, WINDOW_HEIGHT, 0, SDL_HWSURFACE | SDL_DOUBLEBUF);
@@ -30,6 +34,11 @@ RenderManager::RenderManager(GameGrid::Ptr grid)
 
    RGBColor temp = {240, 128, 0};
    /* Initialize all colors */
+   cout << "Using " << NUM_THREADS << " threads." << endl;
+   threadColors = new RGBColor[NUM_THREADS];
+   for(size_t i = 0; i < NUM_THREADS; ++i)
+       threadColors[i] = get_color();
+
    for(size_t col = 0; col < model->GetGridSize()-1; ++col)
    {
        for(size_t row = 0; row < model->GetGridSize()-1; ++row)
@@ -61,16 +70,23 @@ bool RenderManager::render_frame()
     SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 255, 255, 255));
     for(size_t col = 0; col < model->GetGridSize()-1; ++col)
     {
-        
+
         for(size_t row = 0; row < model->GetGridSize()-1; ++row)
         { 
             RGBColor rgb = colorMap[pixelhash(col,row)];
-            if(model->GetCellValue(col, row))
+            if(model->GetCellValue(col, row)) //Draw the cell
                 boxRGBA(screen, col*CellSize, row*CellSize, (col+1)*CellSize, (row+1)*CellSize, 
-                     rgb.Red, rgb.Green, rgb.Blue, 255);
-           if(CellSize >= 4) 
-            rectangleRGBA(screen, col*CellSize, row*CellSize, (col+1)*CellSize, (row+1)*CellSize, 
-                    195, 195, 195, 255);
+                        rgb.Red, rgb.Green, rgb.Blue, 255);
+            if(CellSize >= 4) //Only draw a bounding box it the cell is larger than 4 pixels
+                rectangleRGBA(screen, col*CellSize, row*CellSize, (col+1)*CellSize, (row+1)*CellSize, 
+                        195, 195, 195, 255);
+
+            //Draw the Thread Colors
+            int threadId = model->GetThreadValue(col,row);
+            boxRGBA(screen, (col*CellSize)+(model->GetGridSize()-1)*CellSize, row*CellSize,
+                    ((col+1)*CellSize)+(model->GetGridSize()-1)*CellSize, (row+1)*CellSize,
+                    threadColors[threadId].Red, threadColors[threadId].Green, threadColors[threadId].Blue, 255);
+
         }
     }
     /* Render Cell here */
@@ -110,13 +126,24 @@ void RenderManager::render_cell()
     return;
 }
 
-void RenderManager::render_region()
+void RenderManager::render_regions()
 {
-    RGBColor rgb = get_color();
+
+    for(size_t colorIdx = 0; colorIdx < NUM_THREADS; ++colorIdx)
+    {
+        rectangleRGBA( screen,
+                0+10*colorIdx, 0+10*colorIdx,
+                10+10*colorIdx, 40+10*colorIdx,
+                threadColors[colorIdx].Red, threadColors[colorIdx].Green, threadColors[colorIdx].Blue, 255);
+        rectangleRGBA( screen,
+                0+10*colorIdx+1, 0+10*colorIdx+1,
+                10+10*colorIdx+1, 40+10*colorIdx+1,
+                threadColors[colorIdx].Red, threadColors[colorIdx].Green, threadColors[colorIdx].Blue, 255);
     rectangleRGBA( screen,
-            0, 0,
-            10, 40,
-            rgb.Red, rgb.Green, rgb.Blue, 255);
+            0+10*colorIdx+2, 0+10*colorIdx+2,
+            10+10*colorIdx+2, 40+10*colorIdx+2,
+            threadColors[colorIdx].Red, threadColors[colorIdx].Green, threadColors[colorIdx].Blue, 255);
+    }
     return;
 }
 
@@ -124,8 +151,8 @@ void RenderManager::render_region()
 RGBColor RenderManager::get_color()
 {
     HSVColor hsv;
-    
-   hue += GOLDEN_RATIO_CONJUGATE;
+
+    hue += GOLDEN_RATIO_CONJUGATE;
    hue = modulus(hue, 1);
     hsv.Hue = hue;
     hsv.Saturation = 0.9;

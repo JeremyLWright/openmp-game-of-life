@@ -12,6 +12,8 @@
 #include <vector>
 #include <string>
 #include <stdint.h>
+#include <list>
+using std::list;
 using std::string;
 using std::vector;
 
@@ -26,16 +28,21 @@ public:
     virtual void ParseInputFile();
     virtual void CalculateGeneration();
     virtual bool GetCellValue(size_t col, size_t row);
+    virtual int GetThreadValue(size_t col, size_t row);
     virtual size_t GetGridSize();
 protected:
     struct Update {
         bool updateValue;
         bool* position;
+        int* threadPosition;
+        int threadId;
     };
+    virtual void commitUpdates(list<Update> const & updates);
     virtual vector<bool> tokenize(string);
     bool MovePtr(bool** cellPtr, Direction direction, size_t col, size_t row);
     uint32_t CountLivingNeighbors(size_t col, size_t row);
     bool** Grid;
+    int** GridThreads;
     size_t gridSize;
     string filename;
     GameGrid(string filename, size_t size);

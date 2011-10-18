@@ -1,5 +1,6 @@
 #include "GameGridParallel.h"
 #include <list>
+#include <iostream>
 extern "C" {
 #include <omp.h>
 }
@@ -29,7 +30,7 @@ void GameGridParallel::CalculateGeneration()
     for(int i = 0; i < omp_get_max_threads(); i++)
         delayedUpdates[i].reserve(GetGridSize());
 
-#pragma omp parallel for
+#pragma omp parallel for collapse(2) schedule(dynamic)
    for(size_t row = 0; row < GetGridSize(); ++row)
     {
         for(size_t col = 0; col < GetGridSize(); ++col)
@@ -40,24 +41,24 @@ void GameGridParallel::CalculateGeneration()
                 << "Col: " << col
                 << ": " << livingNeighbors << endl;
 #endif
+            Update u;
+            u.threadId = omp_get_thread_num();
+            u.position = &(Grid[col][row]);
+            GridThreads[col][row] = omp_get_thread_num();
             if(Grid[col][row]) //If Cell is alive
             {
                 if(livingNeighbors <= 1)
                 {
                     //Kill Cell
-                    Update u;
                     u.updateValue = false;
-                    u.position = &(Grid[col][row]);
-                    delayedUpdates[omp_get_thread_num()].push_back(u);
+                    delayedUpdates[u.threadId].push_back(u);
                 }
 
                 if(livingNeighbors >= 4)
                 {
                     //Kill Cell
-                    Update u;
                     u.updateValue = false;
-                    u.position = &(Grid[col][row]);
-                    delayedUpdates[omp_get_thread_num()].push_back(u);
+                    delayedUpdates[u.threadId].push_back(u);
                 }
                 /* else remain alive */
             }
@@ -66,10 +67,8 @@ void GameGridParallel::CalculateGeneration()
                 if(livingNeighbors == 3)
                 {
                     //ConceiveCell
-                    Update u;
                     u.updateValue = true;
-                    u.position = &(Grid[col][row]);
-                    delayedUpdates[omp_get_thread_num()].push_back(u);
+                    delayedUpdates[u.threadId].push_back(u);
                 }
             }
 

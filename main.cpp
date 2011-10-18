@@ -19,6 +19,7 @@
 #include "GameGridParallel.h"
 #include "RenderManager/RenderManager.h"
 #include "InputGenerator.h"
+#include <omp.h>
 using std::cout;
 using std::endl;
 using std::cin;
@@ -41,7 +42,7 @@ int main(int argc, const char *argv[])
         print_usage();
         exit(1);
     }
-
+    cout << "Threads " << omp_get_max_threads() << endl;
     int n;
     ifstream fin;
     n = atoi(argv[1]);
@@ -64,11 +65,11 @@ int main(int argc, const char *argv[])
            cout << "Single Threaded" << endl;
            break;
        case 1:
-           game = GameGridParallelRow::construct(filename, n);
+           game = GameGridParallelCol::construct(filename, n);
            cout << "Row Model" << endl;
            break;
        case 2: 
-           game = GameGridParallelCol::construct(filename, n);
+           game = GameGridParallelRow::construct(filename, n);
            cout << "Col Model" << endl;
            break;
        case 3:
@@ -85,6 +86,7 @@ int main(int argc, const char *argv[])
 #ifdef RENDER
     cout << "Welcome. Rendering World. Please Stand-by" << endl;
     RenderManager::Ptr rm = RenderManager::construct(game);
+    RenderManager::Ptr rm2 = RenderManager::construct(game);
 #endif 
     size_t const total_generations = generations;
     int last_percent = 0;
@@ -99,6 +101,7 @@ int main(int argc, const char *argv[])
 #ifdef RENDER
         if(rm->render_frame())
             break;
+        rm2->render_frame();
 #endif
         
 
