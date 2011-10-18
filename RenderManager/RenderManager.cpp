@@ -155,7 +155,7 @@ RGBColor RenderManager::get_color()
     hue += GOLDEN_RATIO_CONJUGATE;
    hue = modulus(hue, 1);
     hsv.Hue = hue;
-    hsv.Saturation = 0.9;
+    hsv.Saturation = 0.4;
     hsv.Value = 0.95;
     return hsv_to_rgb(hsv);
 }
