@@ -46,7 +46,7 @@ void GameGridParallelRow::CalculateGeneration()
                 if(livingNeighbors <= 1)
                 {
                     //Kill Cell
-                    u.updateValue = true;
+                    u.updateValue = false;
 #pragma omp critical
                     {
                     delayedUpdates.push_back(u);
