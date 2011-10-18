@@ -65,11 +65,11 @@ int main(int argc, const char *argv[])
            cout << "Single Threaded" << endl;
            break;
        case 1:
-           game = GameGridParallelRow::construct(filename, n);
+           game = GameGridParallelCol::construct(filename, n);
            cout << "Row Model" << endl;
            break;
        case 2: 
-           game = GameGridParallelCol::construct(filename, n);
+           game = GameGridParallelRow::construct(filename, n);
            cout << "Col Model" << endl;
            break;
        case 3:
