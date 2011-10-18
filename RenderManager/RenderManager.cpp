@@ -70,16 +70,23 @@ bool RenderManager::render_frame()
     SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 255, 255, 255));
     for(size_t col = 0; col < model->GetGridSize()-1; ++col)
     {
-        
+
         for(size_t row = 0; row < model->GetGridSize()-1; ++row)
         { 
             RGBColor rgb = colorMap[pixelhash(col,row)];
-            if(model->GetCellValue(col, row))
+            if(model->GetCellValue(col, row)) //Draw the cell
                 boxRGBA(screen, col*CellSize, row*CellSize, (col+1)*CellSize, (row+1)*CellSize, 
-                     rgb.Red, rgb.Green, rgb.Blue, 255);
-           if(CellSize >= 4) 
-            rectangleRGBA(screen, col*CellSize, row*CellSize, (col+1)*CellSize, (row+1)*CellSize, 
-                    195, 195, 195, 255);
+                        rgb.Red, rgb.Green, rgb.Blue, 255);
+            if(CellSize >= 4) //Only draw a bounding box it the cell is larger than 4 pixels
+                rectangleRGBA(screen, col*CellSize, row*CellSize, (col+1)*CellSize, (row+1)*CellSize, 
+                        195, 195, 195, 255);
+
+            //Draw the Thread Colors
+            int threadId = model->GetThreadValue(col,row);
+            boxRGBA(screen, (col*CellSize)+(model->GetGridSize()-1)*CellSize, row*CellSize,
+                    ((col+1)*CellSize)+(model->GetGridSize()-1)*CellSize, (row+1)*CellSize,
+                    threadColors[threadId].Red, threadColors[threadId].Green, threadColors[threadId].Blue, 255);
+
         }
     }
     /* Render Cell here */
