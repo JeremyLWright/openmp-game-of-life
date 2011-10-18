@@ -1,9 +1,11 @@
 %\documentclass[journal,10pt,onecolumn,draftcls]{IEEEtran}
-\documentclass[journal,10pt,onecolumn]{IEEEtran}
+\documentclass[10pt]{article}
 \usepackage{listings}
 \usepackage{wrapfig}
 \usepackage{graphicx}
 \usepackage{float}
+\usepackage{fullpage}
+\usepackage{appendix}
 % correct bad hyphenation here
 \hyphenation{op-tical net-works semi-conduc-tor}
 
@@ -34,11 +36,10 @@ only OpenMP constructs.
 \listoffigures
 %\newpage 
 
-\IEEEpeerreviewmaketitle
 
 \section{Introduction}
 
-\IEEEPARstart{O}{penMP} allows one to quickly sprinkle bits of parallelism throughout
+OpenMP allows one to quickly sprinkle bits of parallelism throughout
 a serial program and using a profiler such as Intel's Parallel Studio Amplifier, measure 
 the speedup.  OpenMP, however, is not a panacea for all parallelism. For example, OpenMP primitives
 cannot parallelize C++ iterators.  Despite these 
@@ -110,7 +111,7 @@ across 6 processors we have equations~\ref{eq:expanded_form_start} through \ref{
 \label{eq:expanded_form}
 \end{eqnarray}
 
-\begin{figure*}[!t]
+\begin{figure*}[h]
 \begin{center}
 \includegraphics[width=0.8\textwidth]{figures/matrix_without_dynamic_schedule_cpu_usage.png}
 \caption{Matrix Multiply Poor CPU Utilization using Standard Parallel for.}
@@ -118,7 +119,7 @@ across 6 processors we have equations~\ref{eq:expanded_form_start} through \ref{
 \end{center}
 \end{figure*}
 
-\begin{figure*}[!t]
+\begin{figure*}[h]
 \begin{center}
 \includegraphics[width=0.9\textwidth]{figures/matrix_without_dynamic_schedule_thread_concurrency.png}
 \caption{Matrix Multiply Thread Concurrency using Standard Parallel for.}
@@ -156,7 +157,7 @@ Ideal region. This shows that the dynamic scheduler evenly divides the work acro
 while simultaneously keeps the threads well loaded.  No single thread of execution is idling 
 excessively.
 
-\begin{figure*}[!t]
+\begin{figure*}[h]
 \begin{center}
 \includegraphics[width=0.8\textwidth]{figures/matrix_dynamic_schedule_cpu_usage.png}
 \caption{Matrix Multiply CPU Usage using Dynamic Thread Balancing.}
@@ -164,7 +165,7 @@ excessively.
 \end{center}
 \end{figure*}
 
-\begin{figure*}[!t]
+\begin{figure*}[h]
 \begin{center}
 \includegraphics[width=0.8\textwidth]{figures/matrix_dynamic_schedule_thread_concurrency.png}
 \caption{Matrix Multiply Thread Concurrency using Dynamic Thread Balancing.}
@@ -180,7 +181,7 @@ high, the processor is mostly idle.  This is comforting to realize that the Open
 settings offer the best performance. This makes using OpenMP in real world project even simpler.
 
 
-\begin{figure*}[!t]
+\begin{figure*}[h]
 \begin{center}
 \includegraphics[width=0.8\textwidth]{figures/12_threaded_matrix_thread_cpu_usage_histogram.png}
 \caption{CPU Utilization forcing 12 threads.}
@@ -188,7 +189,7 @@ settings offer the best performance. This makes using OpenMP in real world proje
 \end{center}
 \end{figure*}
 
-\begin{figure*}[!t]
+\begin{figure*}[h]
 \begin{center}
 \includegraphics[width=0.8\textwidth]{figures/12_threaded_matrix_thread_concurrent_histogram.png}
 \caption{Thread Concurrency forcing 12 threads.}
@@ -209,11 +210,11 @@ definition an extension to the language, if the compiler doesn't understand the 
 are simply ignored. This allows one to liberally use OpenMP, and if the compiler of choice doesn't
 support the OpenMP directives, OpenMP will not break the build.  OpenMP is a fantastic tool.
 
-\appendices
+\begin{appendices}
 \section{Intel Parallel Studio}
 \label{sec:Intel-Tools}
 
-\begin{figure*}[!t]
+\begin{figure*}[h]
 \begin{center}
 \includegraphics[width=0.8\textwidth]{figures/fileMep7k0_Memory_Analysis.png}
 \caption{Intel Inspector with Debug Symbols enabled.}
@@ -221,7 +222,7 @@ support the OpenMP directives, OpenMP will not break the build.  OpenMP is a fan
 \end{center}
 \end{figure*}
 
-\begin{figure*}[!t]
+\begin{figure*}[h]
 \begin{center}
 \includegraphics[width=0.5\textwidth]{figures/ChangeSet14_Memory.png}
 \caption{Game of Life: All Memory Leaks Fixed.}
@@ -229,7 +230,7 @@ support the OpenMP directives, OpenMP will not break the build.  OpenMP is a fan
 \end{center}
 \end{figure*}
 
-\begin{figure*}[!t]
+\begin{figure*}[h]
 \begin{center}
 \includegraphics[width=0.8\textwidth]{figures/ChangeSet14.png}
 \caption{Game of Life: All Deadlocks and Data Races Fixed.}
@@ -237,7 +238,7 @@ support the OpenMP directives, OpenMP will not break the build.  OpenMP is a fan
 \end{center}
 \end{figure*}
 
-\begin{figure*}[!t]
+\begin{figure*}[h]
 \begin{center}
 \includegraphics[width=0.8\textwidth]{figures/Data_Race_Anaylsis.png}
 \caption{Game of Life: Data Race found on the Update List.}
@@ -278,7 +279,7 @@ It's great tool suite. I don't have an Intel processor, so some of the profilers
 wouldn't work, and the errors were non-obvious, but overall the tool is great, and 
 I really like that it runs on Linux.
 
-
+\end{appendices}
 
 % that's all folks
 \end{document}
