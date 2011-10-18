@@ -37,7 +37,7 @@ class RenderManager {
     void render_cell();
     const int WINDOW_WIDTH;
     const int WINDOW_HEIGHT;
-    void render_region();
+    void render_regions();
     const char* WINDOW_TITLE;
     SDL_Surface* screen;
     SDL_Event event;
@@ -50,6 +50,8 @@ class RenderManager {
     RGBColor hsv_to_rgb(HSVColor hsv);
     RGBColor get_color();
     private:
+    int const NUM_THREADS;
+    RGBColor* threadColors;
     RenderManager(GameGrid::Ptr grid);
     RenderManager::WeakPtr self;
     

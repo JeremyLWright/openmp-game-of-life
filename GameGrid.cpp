@@ -1,10 +1,12 @@
 #include "GameGrid.h"
+#include <cstring>
 #include <fstream>
 #include <sstream>
 #include <iterator>
 #include <algorithm>
 #include <iostream>
 #include <list>
+#include <omp.h>
 using std::list;
 using std::cout;
 using std::endl;
@@ -42,6 +44,10 @@ GameGrid::~GameGrid()
     for(size_t i = 0; i < GetGridSize(); ++i)
         delete [] Grid[i];
     delete [] Grid;
+    
+    for(size_t i = 0; i < GetGridSize(); ++i)
+        delete [] GridThreads[i];
+    delete [] GridThreads;
 }
 
 GameGrid::GameGrid(string filename, size_t size)
@@ -50,12 +56,24 @@ GameGrid::GameGrid(string filename, size_t size)
     Grid = new bool*[size];
     for(size_t i = 0; i < size; ++i)
         Grid[i] = new bool[size];
+
+    GridThreads = new int*[size];
+    for(size_t i = 0; i < size; ++i)
+    {
+        GridThreads[i] = new int[size];
+        memset(GridThreads[i], 0, size*sizeof(int));
+    }
     gridSize = size;
 }
 
 bool GameGrid::GetCellValue(size_t col, size_t row)
 {
     return Grid[col][row];
+}
+
+int GameGrid::GetThreadValue(size_t col, size_t row)
+{
+    return GridThreads[col][row];
 }
 size_t GameGrid::GetGridSize()
 {
@@ -120,23 +138,23 @@ void GameGrid::CalculateGeneration()
                 << "Col: " << col
                 << ": " << livingNeighbors << endl;
 #endif
+            Update u;
+            u.threadId = omp_get_thread_num();
+            u.position = &(Grid[col][row]);
+            u.threadPosition = &(GridThreads[col][row]);
             if(Grid[col][row]) //If Cell is alive
             {
                 if(livingNeighbors <= 1)
                 {
                     //Kill Cell
-                    Update u;
                     u.updateValue = false;
-                    u.position = &(Grid[col][row]);
                     delayedUpdates.push_back(u);
                 }
 
                 if(livingNeighbors >= 4)
                 {
                     //Kill Cell
-                    Update u;
                     u.updateValue = false;
-                    u.position = &(Grid[col][row]);
                     delayedUpdates.push_back(u);
                 }
                 /* else remain alive */
@@ -146,25 +164,31 @@ void GameGrid::CalculateGeneration()
                 if(livingNeighbors == 3)
                 {
                     //ConceiveCell
-                    Update u;
                     u.updateValue = true;
-                    u.position = &(Grid[col][row]);
                     delayedUpdates.push_back(u);
                 }
             }
 
         }
     }
-    if(delayedUpdates.size() == 0)
+    commitUpdates(delayedUpdates);
+}
+
+void GameGrid::commitUpdates(list<Update>const & updates)
+{
+    if(updates.size() == 0)
         cout << "Game Ended." << endl;
     // Commit all updates to the grid.
-    for(list<Update>::const_iterator i = delayedUpdates.begin();
-            i != delayedUpdates.end();
+    for(list<Update>::const_iterator i = updates.begin();
+            i != updates.end();
             ++i)
     {
         *(i->position) = i->updateValue;
+        *(i->threadPosition) = i->threadId;
     }
+
 }
+
 
 vector<bool> GameGrid::tokenize(string line)
 {
