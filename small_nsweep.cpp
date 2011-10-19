@@ -40,29 +40,29 @@ timespec diff(timespec start, timespec end)
 }
 int main(int argc, const char *argv[])
 {
-    for(int model = 1; model < 4; model++)
+    for(int model = 0; model < 4; model++)
     {
         ofstream fout;
         switch(model)
         {
             case 0:
-                fout.open("single.dat");
+                fout.open("sm_single.dat");
                 break;
             case 1:
-                fout.open("col.dat");
+                fout.open("sm_col.dat");
                 break;
             case 2:
-                fout.open("row.dat");
+                fout.open("sm_row.dat");
                 break;
             case 3:
-                fout.open("full.dat");
+                fout.open("sm_full.dat");
                 break;
         }
-        for(int i = 100; i < 6500; i += 100)
+        for(int i = 10; i < 500; i += 10)
         {
             InputGenerator::Ptr ig = InputGenerator::construct();
             string filename = ig->createFile(i);
-            cout << static_cast<float>(i)/static_cast<float>(10000) << endl;
+            cout << static_cast<float>(i)/static_cast<float>(500) << endl;
             GameGrid::Ptr game;
             switch(model)
             {
