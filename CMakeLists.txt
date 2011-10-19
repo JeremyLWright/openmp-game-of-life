@@ -29,6 +29,7 @@ SET(GameSources GameGrid.cpp GameGridParallelRow.cpp InputGenerator.cpp GameGrid
 
 add_executable(run-life main.cpp ${GameSources})
 add_executable(nsweep nsweep.cpp ${GameSources})
+add_executable(sm_nsweep small_nsweep.cpp ${GameSources})
 if(${USE_INTEL})
     target_link_libraries(run-life iomp5)
 else()
@@ -37,6 +38,7 @@ else()
     else()
         target_link_libraries(run-life gomp)
         target_link_libraries(nsweep gomp)
+        target_link_libraries(sm_nsweep gomp)
     endif()
 endif()
 
