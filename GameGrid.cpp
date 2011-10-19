@@ -177,7 +177,7 @@ void GameGrid::CalculateGeneration()
 void GameGrid::commitUpdates(list<Update>const & updates)
 {
     if(updates.size() == 0)
-        cout << "Game Ended." << endl;
+        return;
     // Commit all updates to the grid.
     for(list<Update>::const_iterator i = updates.begin();
             i != updates.end();

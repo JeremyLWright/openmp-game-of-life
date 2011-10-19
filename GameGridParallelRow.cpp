@@ -24,10 +24,10 @@ GameGridParallelRow::~GameGridParallelRow()
 
 void GameGridParallelRow::CalculateGeneration()
 {
-    list<Update> delayedUpdates;
+    vector<Update> delayedUpdates[omp_get_max_threads()];
    for(size_t row = 0; row < GetGridSize(); ++row)
     {
-#pragma omp parallel for shared(delayedUpdates) 
+#pragma omp parallel for 
         for(size_t col = 0; col < GetGridSize(); ++col)
         {
             uint32_t livingNeighbors = CountLivingNeighbors(col, row);
@@ -47,20 +47,14 @@ void GameGridParallelRow::CalculateGeneration()
                 {
                     //Kill Cell
                     u.updateValue = false;
-#pragma omp critical
-                    {
-                    delayedUpdates.push_back(u);
-                    }
+                    delayedUpdates[u.threadId].push_back(u);
                 }
 
                 if(livingNeighbors >= 4)
                 {
                     //Kill Cell
                     u.updateValue = false;
-#pragma omp critical 
-                    {
-                    delayedUpdates.push_back(u);
-                    }
+                    delayedUpdates[u.threadId].push_back(u);
                 }
                 /* else remain alive */
             }
@@ -70,20 +64,20 @@ void GameGridParallelRow::CalculateGeneration()
                 {
                     //ConceiveCell
                     u.updateValue = true;
-#pragma omp critical
-                    {
-                    delayedUpdates.push_back(u);
-                    }
+                    delayedUpdates[u.threadId].push_back(u);
                 }
             }
 
         }
     }  // Commit all updates to the grid.
-    for(list<Update>::const_iterator i = delayedUpdates.begin();
-            i != delayedUpdates.end();
+   for(int j = 0; j < omp_get_max_threads(); ++j)
+   {
+    for(vector<Update>::const_iterator i = delayedUpdates[j].begin();
+            i != delayedUpdates[j].end();
             ++i)
     {
         *(i->position) = i->updateValue;
     }
+   }
 
 }
