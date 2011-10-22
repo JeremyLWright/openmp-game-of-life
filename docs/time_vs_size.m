@@ -6,15 +6,31 @@ load full.dat;
 count = col(:,1);
 
 single = single(:, 2:end);
+maxes = max(single', [], 1);
+mins = min(single', [], 1);
+single = setdiff(single', maxes, 'rows')';
+single = setdiff(single', mins, 'rows')';
 sin_avg = mean(single')/1000;
 
 col = col(:, 2:end);
+maxes = max(col', [], 1);
+mins = min(col', [], 1);
+col = setdiff(col', maxes, 'rows')';
+col = setdiff(col', mins, 'rows')';
 col_avg = mean(col')/1000;
 
 row = row(:, 2:end);
+maxes = max(row', [], 1);
+mins = min(row', [], 1);
+row = setdiff(row', maxes, 'rows')';
+row = setdiff(row', mins, 'rows')';
 row_avg = mean(row')/1000;
 
 full = full(:, 2:end);
+maxes = max(full', [], 1);
+mins = min(full', [], 1);
+full = setdiff(full', maxes, 'rows')';
+full = setdiff(full', mins, 'rows')';
 full_avg = mean(full')/1000;
 
 plot( count, sin_avg, count, col_avg, count, row_avg, count, full_avg);
