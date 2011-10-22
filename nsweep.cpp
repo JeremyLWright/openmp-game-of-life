@@ -58,7 +58,7 @@ int main(int argc, const char *argv[])
                 fout.open("full.dat");
                 break;
         }
-        for(int i = 100; i < 6500; i += 100)
+        for(int i = 100; i < 3000; i += 100)
         {
             InputGenerator::Ptr ig = InputGenerator::construct();
             string filename = ig->createFile(i);
